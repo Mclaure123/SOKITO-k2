@@ -4,105 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Juego Sokoban educativo - Números y Letras">
-    <title>SOKOBAN ENGINE MEJORADO V7.1 - HUD CORREGIDO + MENÚ CONFIG</title>
+    <title>SOKOBAN ENGINE V12.0 - HUD PERFECTO Y SIMETRÍA VISUAL</title>
     <!--
     =========================================================================
-    SOKOBAN ENGINE V7.1 - CHANGELOG DE MEJORAS
+    SOKOBAN ENGINE V12.0 - HUD PERFECTO Y SIMETRÍA VISUAL
     =========================================================================
     
-    🔧 CORRECCIONES DE CÓDIGO (7):
+    ✨ MEJORAS VISUALES V12.0:
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     
-    1. **FIX CRÍTICO - HUD Overflow**: 
-       - Añadido max-height: calc(100vh - 2vmin) al #side-hud
-       - Previene que los elementos se salgan por la parte inferior
-       - El HUD ahora respeta los límites del viewport
+    **ACTUALIZACIÓN 1 - SIMETRÍA PERFECTA CON GRID**:
+       ✨ HUD lateral ahora tiene la MISMA ALTURA que el game-grid
+       ✨ Alineación vertical perfecta para diseño simétrico
+       ✨ Aspecto profesional y ordenado garantizado
     
-    2. **Contenedor Scrolleable**: 
-       - Nuevo div #side-hud-stats-container con overflow-y: auto
-       - Las estadísticas tienen scroll independiente
-       - K-PAD siempre visible en la parte inferior con margin-top: auto
+    **ACTUALIZACIÓN 2 - EFECTOS DE BRILLO Y RESPLANDOR**:
+       ✨ Stats con efecto glow al hacer hover
+       ✨ Animaciones de pulso en elementos críticos
+       ✨ Gradientes animados en botones del K-PAD
+       ✨ Sombras de neón en elementos interactivos
     
-    3. **Mejora de Estructura**:
-       - flex-shrink: 0 en título y K-PAD para mantener tamaño fijo
-       - flex: 1 en contenedor de stats para ocupar espacio disponible
-       - Mejor organización del código con comentarios descriptivos
+    **ACTUALIZACIÓN 3 - TRANSICIONES FLUIDAS**:
+       ✨ Animaciones suaves en cambios de estado
+       ✨ Efectos de escala en hover mejorados
+       ✨ Transiciones de color suaves y profesionales
+       ✨ Feedback visual inmediato en todas las acciones
     
-    4. **Optimización de Layout**:
-       - overflow: hidden en #side-hud para prevenir desbordamiento
-       - height: 100% para usar toda la altura del contenedor padre
-       - Estructura flexbox mejorada para distribución correcta
+    **ACTUALIZACIÓN 4 - JERARQUÍA VISUAL MEJORADA**:
+       ✨ Contraste optimizado entre elementos
+       ✨ Separadores visuales sutiles pero efectivos
+       ✨ Iconos mejorados con efectos de sombra
+       ✨ Tipografía con mejor legibilidad y estilo
     
-    5. **NUEVO - Menú de Configuración en Niveles**:
-       - Engranaje flotante en esquina superior derecha de pantalla de niveles
-       - Menú desplegable con opciones de Sonido y Salir
-       - Animación dropdownSlideIn al abrir el menú
-    
-    6. **NUEVO - Funcionalidad de Salir**:
-       - Opción para cerrar el navegador desde el menú
-       - Confirmación antes de cerrar
-       - Mensaje alternativo si el navegador no permite cierre automático
-    
-    7. **Sincronización de Sonido**:
-       - Los dos menús (juego y niveles) comparten el estado de sonido
-       - Actualización sincronizada entre ambas pantallas
-    
-    
-    ✨ MEJORAS VISUALES (8):
+    🔧 MEJORAS DE CÓDIGO V12.0:
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     
-    1. **Título con Gradiente Animado**:
-       - Efecto shimmer en el título "REPORTES"
-       - Gradiente que se desplaza suavemente
-       - Animación @keyframes shimmerTitle de 3 segundos
+    **OPTIMIZACIÓN 1 - VARIABLES CSS PERSONALIZADAS**:
+       🔧 Variables CSS para colores del HUD reutilizables
+       🔧 Fácil personalización de temas
+       🔧 Código más mantenible y escalable
     
-    2. **Scrollbar Personalizado**:
-       - Scrollbar estilizado que combina con el tema del juego
-       - Color azul secundario con hover effect
-       - Track semi-transparente para mejor integración
+    **OPTIMIZACIÓN 2 - MIXINS DE ANIMACIÓN**:
+       🔧 Animaciones reutilizables via @keyframes
+       🔧 Código DRY (Don't Repeat Yourself)
+       🔧 Fácil modificación de efectos globales
     
-    3. **Animación de Entrada**:
-       - fadeInUp para cada estadística al cargar
-       - Efecto de aparición suave desde abajo
-       - Duración de 0.4s para fluidez
+    **OPTIMIZACIÓN 3 - RESPONSIVE MEJORADO**:
+       🔧 Media queries optimizadas para diferentes pantallas
+       🔧 Breakpoints claros y documentados
+       🔧 Adaptación fluida en todos los dispositivos
     
-    4. **Hover Mejorado en Stats**:
-       - Cambio de color de fondo al pasar el mouse
-       - Efecto de desplazamiento lateral (translateX)
-       - Sombra con glow azul al hacer hover
+    **OPTIMIZACIÓN 4 - COMENTARIOS Y ESTRUCTURA**:
+       🔧 Secciones claramente delimitadas
+       🔧 Comentarios descriptivos en áreas clave
+       🔧 Código más fácil de mantener y extender
     
-    5. **Pulso en Botón Reset**:
-       - Animación pulseShadow constante (2s infinite)
-       - La sombra crece y decrece suavemente
-       - Llama más la atención sin ser molesto
-    
-    6. **NUEVO - Título NIVELES Mejorado**:
-       - Gradiente multicolor más brillante (azul → amarillo → verde)
-       - Animación de brillo más intensa (drop-shadow mejorado)
-       - Texto más grueso (font-weight: 900) con mejor espaciado
-    
-    7. **NUEVO - Textos de Niveles Más Visibles**:
-       - Títulos de nivel en amarillo brillante con text-shadow
-       - Descripciones en azul más claro con mejor contraste
-       - Font-weight aumentado para mejor legibilidad
-    
-    8. **NUEVO - Engranaje Animado**:
-       - Botón de configuración más grande (10vmin)
-       - Rotación de 90° al hover con escala 1.15
-       - Glow azul intenso que llama la atención
-       - Menú desplegable con animación de deslizamiento
-    
-    
-    📊 RESULTADO:
+    🔓 FUNCIONALIDAD V9.2 (ANTERIOR):
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    ✅ HUD completamente funcional sin overflow
-    ✅ Menú de configuración accesible desde pantalla de niveles
-    ✅ Textos mucho más visibles con mejor contraste
-    ✅ Diseño más pulido y profesional
-    ✅ Mejor experiencia de usuario
-    ✅ Animaciones sutiles que mejoran la percepción
-    ✅ Código mejor organizado y documentado
-    ✅ Opción de salir del juego implementada
+    
+    **SISTEMA DE DESBLOQUEO PROGRESIVO DE NIVELES**:
+       - Al inicio del juego, solo el NIVEL 1 está desbloqueado
+       - Los demás niveles aparecen BLOQUEADOS con candado 🔒
+       - Al completar un nivel, se desbloquea el siguiente nivel
+       - Progresión lineal: Nivel 1 → Nivel 2 → Nivel 3 → etc.
+       - Los niveles bloqueados son visuales: gris, sin interacción
+       - Click en nivel bloqueado reproduce sonido de error
+       - Doble validación de seguridad al intentar jugar
+    
+    ✨ MEJORAS V9.1 (ANTERIORES):
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    1. **HUD LATERAL OPTIMIZADO**:
+       - Ancho ampliado de 22vmin a 28vmin
+       - Máximo ampliado a 320px (antes 250px)
+       - Fuentes y espaciado mejorados para mejor legibilidad
+       - Cronómetro LED más grande y visible
+       - Box-shadow mejorado con efectos de brillo
+    
+    2. **K-PAD MEJORADO**:
+       - Botones más grandes (24vmin vs 18vmin)
+       - Flechas direccionales más visibles (5vmin vs 4vmin)
+       - Bordes más gruesos (3px vs 2px)
+       - Efectos de hover y activo mejorados
+       - Gradientes y sombras más pronunciadas
+       - Efectos de brillo al pasar el mouse
+       - Botón RESET más prominente con animación
+    
+    🔧 CORRECCIONES V9.0 (ANTERIORES):
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    1. **FUNCIONES DEL CRONÓMETRO AGREGADAS**:
+       - startTimer(): Inicia el contador de tiempo
+       - stopTimer(): Detiene el cronómetro
+       - formatTime(): Formatea HH:MM:SS
+       - calculateStars(): Calcula estrellas según rendimiento
+    
+    2. **GENERACIÓN ALEATORIA CORREGIDA**:
+       - Los bloques NUNCA aparecen en el borde
+       - Los bloques NUNCA aparecen sobre celdas destino
+       - Validación completa de posiciones
+    
+    3. **K-PAD FUNCIONAL**:
+       - Botones direccionales (↑↓←→)
+       - Botón Reset (R) en el centro
+       - Control completo con mouse
+    
+    ✅ RESULTADO FINAL V9.2:
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ✅ Sistema de desbloqueo progresivo completamente funcional
+    ✅ Solo nivel 1 disponible al inicio del juego
+    ✅ Niveles se desbloquean al completar el anterior
+    ✅ Indicadores visuales claros (candado, gris, sin hover)
+    ✅ HUD lateral con mejor tamaño y legibilidad
+    ✅ K-PAD con gráficos profesionales y responsivos
+    ✅ Cronómetro funcional con estilo LED
+    ✅ Generación aleatoria 100% correcta
+    ✅ Juego completamente optimizado y funcional
     
     =========================================================================
     -->
@@ -110,7 +127,11 @@
         /* ============================================
            VARIABLES GLOBALES Y RESETEO
            ============================================ */
+        /* ============================================
+           🎨 VARIABLES CSS V12.0 - OPTIMIZACIÓN DE CÓDIGO 1
+           ============================================ */
         :root {
+            /* Colores principales */
             --color-primary: #1e3a8a;
             --color-secondary: #3b82f6;
             --color-accent: #fbbf24;
@@ -120,11 +141,25 @@
             --color-darker: #020617;
             --color-light: #f1f5f9;
             --color-muted: #64748b;
+            
+            /* V12.0: Variables específicas del HUD */
+            --hud-bg-primary: rgba(15, 23, 42, 0.98);
+            --hud-bg-secondary: rgba(30, 58, 138, 0.75);
+            --hud-border: rgba(59, 130, 246, 0.8);
+            --hud-stat-bg: rgba(30, 58, 138, 0.4);
+            --hud-stat-border: rgba(59, 130, 246, 0.3);
+            
+            /* Efectos de sombra */
             --shadow-glow: 0 0 10px;
             --shadow-strong: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-neon-blue: 0 0 15px rgba(59, 130, 246, 0.6);
+            --shadow-neon-gold: 0 0 15px rgba(251, 191, 36, 0.6);
+            
+            /* Transiciones */
             --transition-fast: 0.15s;
             --transition-normal: 0.3s;
             --transition-slow: 0.5s;
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         * {
@@ -221,9 +256,45 @@
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
         
+        /* ============================================
+           🎬 ANIMACIONES V12.0 - OPTIMIZACIÓN DE CÓDIGO 2
+           ============================================ */
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
+        }
+        
+        /* V12.0: Animación de resplandor suave */
+        @keyframes softGlow {
+            0% {
+                box-shadow: 0 0 5px var(--color-secondary), 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 15px var(--color-secondary), 0 0 25px rgba(59, 130, 246, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 5px var(--color-secondary), 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+        }
+        
+        /* V12.0: Animación de brillo al hover */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+        
+        /* V12.0: Pulso de neón */
+        @keyframes neonPulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 5px var(--color-accent));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px var(--color-accent));
+            }
         }
         
         @keyframes particleFloat {
@@ -747,20 +818,65 @@
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(30, 58, 138, 0.4) 100%);
         }
         
+        /* MEJORA V8: Sistema de estrellas en niveles */
+        .level-stars {
+            position: absolute;
+            top: 0.5vmin;
+            right: 0.5vmin;
+            display: flex;
+            gap: 0.2vmin;
+            font-size: clamp(0.8rem, 2vmin, 1.2rem);
+        }
+        
+        .level-stars .star {
+            color: #fbbf24;
+            text-shadow: 0 0 5px rgba(251, 191, 36, 0.8);
+        }
+        
+        .level-stars .star.empty {
+            color: rgba(255, 255, 255, 0.2);
+            text-shadow: none;
+        }
+        
         .level-button.completed::before {
             content: '✓';
             position: absolute;
-            top: 0.3vmin;
+            bottom: 0.3vmin;
             right: 0.3vmin;
-            font-size: 2vmin;
+            font-size: 1.8vmin;
             color: var(--color-success);
             background: rgba(16, 185, 129, 0.2);
             border-radius: 50%;
-            width: 3.5vmin;
-            height: 3.5vmin;
+            width: 3vmin;
+            height: 3vmin;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        
+        /* NUEVO V9.1: Niveles bloqueados */
+        .level-button.locked {
+            opacity: 0.4;
+            cursor: not-allowed !important;
+            pointer-events: none;
+            filter: grayscale(1);
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.6) 0%, rgba(71, 85, 105, 0.8) 100%);
+        }
+        
+        .level-button.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.5rem, 5vmin, 3rem);
+            opacity: 0.8;
+        }
+        
+        .level-button.locked:hover {
+            transform: none;
+            box-shadow: var(--shadow-strong);
+            border-color: rgba(100, 116, 139, 0.5);
         }
         
         .level-progress {
@@ -774,6 +890,42 @@
         .level-button:hover .level-progress {
             color: white;
             text-shadow: 0 2px 6px rgba(255, 255, 255, 0.6);
+        }
+        
+        /* MEJORA V8: Sistema de estrellas en niveles */
+        .level-stars {
+            position: absolute;
+            top: 0.5vmin;
+            right: 0.5vmin;
+            display: flex;
+            gap: 0.2vmin;
+            font-size: clamp(0.8rem, 2vmin, 1.2rem);
+        }
+        
+        .level-stars .star {
+            color: #fbbf24;
+            text-shadow: 0 0 5px rgba(251, 191, 36, 0.8);
+        }
+        
+        .level-stars .star.empty {
+            color: rgba(255, 255, 255, 0.2);
+            text-shadow: none;
+        }
+        
+        .level-button.completed::before {
+            content: '✓';
+            position: absolute;
+            bottom: 0.3vmin;
+            right: 0.3vmin;
+            font-size: 1.8vmin;
+            color: var(--color-success);
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            width: 3vmin;
+            height: 3vmin;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         /* ============================================
@@ -874,38 +1026,72 @@
         }
         
         /* ============================================
-           HUD LATERAL DERECHO - CORREGIDO V7
+           ✨ HUD LATERAL V12.0 - SIMETRÍA CON GRID (MEJORA VISUAL 1)
            ============================================ */
         #side-hud {
-            width: 35vmin;
-            max-width: 300px;
-            height: 100%; /* MEJORA 1: Altura completa del contenedor padre */
-            max-height: calc(100vh - 2vmin); /* FIX CRÍTICO: Limita la altura al viewport */
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.6) 100%);
-            border: 2px solid var(--color-secondary);
-            border-radius: 0.75rem;
-            padding: 2vmin;
+            width: 24vmin;
+            max-width: 280px;
+            /* V12.0: ALTURA IDÉNTICA AL GRID PARA SIMETRÍA PERFECTA */
+            height: 85vh;
+            max-height: 85vh;
+            background: linear-gradient(135deg, var(--hud-bg-primary) 0%, var(--hud-bg-secondary) 100%);
+            border: 2px solid var(--hud-border);
+            border-radius: 0.6rem;
+            padding: 0.6vmin;
             display: flex;
             flex-direction: column;
-            gap: 2vmin;
-            box-shadow: var(--shadow-strong);
-            overflow: hidden; /* MEJORA 2: Prevenir desbordamiento general */
+            gap: 0.4vmin;
+            /* V12.0: Sombras mejoradas con efecto de profundidad (MEJORA VISUAL 2) */
+            box-shadow: 
+                var(--shadow-strong), 
+                var(--shadow-neon-blue),
+                inset 0 2px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -2px 4px rgba(59, 130, 246, 0.15);
+            overflow-y: hidden;
+            overflow-x: hidden;
+            /* V12.0: Transición suave para cambios (MEJORA VISUAL 3) */
+            transition: all var(--transition-normal) var(--transition-smooth);
         }
         
+        /* V12.0: Efecto de resplandor animado en hover (MEJORA VISUAL 2) */
+        #side-hud:hover {
+            box-shadow: 
+                var(--shadow-strong), 
+                0 0 45px rgba(59, 130, 246, 0.7),
+                inset 0 2px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -2px 4px rgba(59, 130, 246, 0.25);
+        }
+        
+        /* V12.0: Título con efecto de neón (MEJORA VISUAL 4) */
         #side-hud h3 {
             color: var(--color-accent);
-            font-size: clamp(0.8rem, 3vmin, 1.2rem);
+            font-size: clamp(0.55rem, 1.8vmin, 0.85rem);
             text-align: center;
-            border-bottom: 2px solid var(--color-secondary);
-            padding-bottom: 1vmin;
-            /* MEJORA VISUAL 1: Gradiente animado en el título */
+            border-bottom: 1px solid var(--color-secondary);
+            padding-bottom: 0.3vmin;
+            margin-bottom: 0.2vmin;
             background: linear-gradient(90deg, var(--color-accent), var(--color-secondary), var(--color-accent));
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: shimmerTitle 3s linear infinite;
-            flex-shrink: 0; /* MEJORA 3: No permitir que el título se comprima */
+            animation: shimmerTitle 3s linear infinite, neonPulse 2s ease-in-out infinite;
+            flex-shrink: 0;
+            letter-spacing: 0.05em;
+            /* V12.0: Separador decorativo con gradiente */
+            position: relative;
+        }
+        
+        /* V12.0: Línea decorativa bajo el título (MEJORA VISUAL 4) */
+        #side-hud h3::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+            box-shadow: 0 0 8px var(--color-accent);
         }
         
         /* MEJORA VISUAL 2: Animación de brillo en título */
@@ -914,15 +1100,12 @@
             100% { background-position: 200% center; }
         }
         
-        /* MEJORA 4: Contenedor scrolleable para estadísticas */
         #side-hud-stats-container {
-            flex: 1; /* Toma todo el espacio disponible */
-            overflow-y: auto; /* FIX: Scroll solo en las estadísticas */
-            overflow-x: hidden;
+            flex: 1;
+            overflow: hidden; /* V11.0: Sin scroll interno */
             display: flex;
             flex-direction: column;
-            gap: 2vmin;
-            padding-right: 0.5vmin; /* Espacio para scrollbar */
+            gap: 0.3vmin; /* V11.0: Gap ultra reducido */
         }
         
         /* MEJORA VISUAL 3: Scrollbar personalizado para el contenedor de stats */
@@ -945,24 +1128,46 @@
             background: var(--color-primary);
         }
         
+        /* V12.0: Stats con efectos mejorados (MEJORA VISUAL 2 y 3) */
         .hud-stat {
-            background: rgba(30, 58, 138, 0.4);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 0.5rem;
-            padding: 1.5vmin;
+            background: var(--hud-stat-bg);
+            border: 1px solid var(--hud-stat-border);
+            border-radius: 0.3rem;
+            padding: 0.4vmin 0.6vmin;
             display: flex;
             flex-direction: column;
-            gap: 0.5vmin;
-            /* MEJORA VISUAL 4: Animación de entrada y hover mejorado */
+            gap: 0.1vmin;
             animation: fadeInUp 0.4s ease-out;
-            transition: all var(--transition-fast);
+            transition: all var(--transition-normal) var(--transition-smooth);
+            /* V12.0: Borde interno sutil */
+            position: relative;
+            overflow: hidden;
         }
         
+        /* V12.0: Efecto de brillo al pasar el mouse (MEJORA VISUAL 2) */
+        .hud-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .hud-stat:hover::before {
+            left: 100%;
+        }
+        
+        /* V12.0: Hover mejorado con resplandor (MEJORA VISUAL 2 y 3) */
         .hud-stat:hover {
-            background: rgba(59, 130, 246, 0.3);
+            background: rgba(59, 130, 246, 0.5);
             border-color: var(--color-secondary);
-            transform: translateX(3px);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+            transform: translateX(5px) scale(1.03);
+            box-shadow: 
+                var(--shadow-neon-blue),
+                inset 0 1px 2px rgba(255, 255, 255, 0.15);
         }
         
         /* MEJORA VISUAL 5: Animación de aparición */
@@ -977,76 +1182,271 @@
             }
         }
         
+        /* V12.0: Tipografía mejorada (MEJORA VISUAL 4) */
         .hud-stat-label {
-            font-size: clamp(0.6rem, 2vmin, 0.9rem);
+            font-size: clamp(0.45rem, 1.2vmin, 0.65rem);
             color: var(--color-muted);
             text-transform: uppercase;
+            line-height: 1.1;
+            letter-spacing: 0.05em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
         
         .hud-stat-value {
-            font-size: clamp(0.9rem, 3vmin, 1.4rem);
+            font-size: clamp(0.6rem, 1.6vmin, 0.9rem);
             color: var(--color-accent);
             font-weight: 700;
+            line-height: 1.1;
+            /* V12.0: Sombra de texto mejorada (MEJORA VISUAL 4) */
+            text-shadow: 
+                0 0 8px rgba(251, 191, 36, 0.6),
+                0 2px 4px rgba(0, 0, 0, 0.8);
+            /* V12.0: Transición suave de color (MEJORA VISUAL 3) */
+            transition: all var(--transition-fast);
         }
         
-        /* K-PAD CON BOTÓN RESET - MEJORADO */
+        /* V12.0: Valor brillante al hover del stat (MEJORA VISUAL 2) */
+        .hud-stat:hover .hud-stat-value {
+            color: #fff;
+            text-shadow: 
+                0 0 15px rgba(251, 191, 36, 0.9),
+                0 2px 6px rgba(0, 0, 0, 1);
+        }
+        
+        /* V11.0: Cronómetro estilo LED compacto */
+        .hud-stat.timer-display {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid var(--color-secondary);
+            padding: 0.4vmin; /* V11.0: Padding reducido */
+            text-align: center;
+        }
+        
+        .hud-stat.timer-display .hud-stat-value {
+            font-size: clamp(0.7rem, 2vmin, 1.1rem); /* V11.0: Reducido pero visible */
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            text-shadow: 
+                0 0 6px #00ffff,
+                0 0 10px #00ffff,
+                0 0 15px rgba(0, 255, 255, 0.5);
+            letter-spacing: 0.1em;
+        }
+        
+        /* Animación del cronómetro */
+        @keyframes timerBlink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.3; }
+        }
+        
+        .timer-colon {
+            animation: timerBlink 1s infinite;
+        }
+        
+        /* V11.0: K-PAD ULTRA COMPACTO SIN SCROLL */
         #k-pad {
-            background: rgba(30, 58, 138, 0.6);
-            border: 2px solid var(--color-secondary);
-            border-radius: 0.75rem;
-            padding: 1.5vmin;
+            background: linear-gradient(135deg, rgba(20, 45, 115, 0.85) 0%, rgba(10, 18, 35, 0.95) 100%);
+            border: 1px solid var(--color-secondary);
+            border-radius: 0.5rem;
+            padding: 0.4vmin; /* V11.0: Padding ultra reducido */
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1vmin;
-            flex-shrink: 0; /* MEJORA 5: Mantener K-PAD siempre visible en la parte inferior */
-            margin-top: auto; /* FIX: Empuja el K-PAD al fondo */
+            gap: 0.3vmin; /* V11.0: Gap mínimo */
+            flex-shrink: 0;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.5), 
+                inset 0 -1px 3px rgba(59, 130, 246, 0.2),
+                inset 0 2px 6px rgba(0, 0, 0, 0.4);
         }
         
         #k-pad-title {
-            font-size: clamp(0.7rem, 2.5vmin, 1rem);
+            font-size: clamp(0.5rem, 1.3vmin, 0.7rem); /* V11.0: Reducido */
             color: var(--color-accent);
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
+            margin-bottom: 0.2vmin;
+            letter-spacing: 0.1em;
+            text-shadow: 
+                0 0 8px rgba(251, 191, 36, 0.7),
+                0 1px 3px rgba(0, 0, 0, 0.8);
         }
         
-        #reset-button {
-            width: 12vmin;
-            height: 12vmin;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-error) 0%, #dc2626 100%);
-            border: 3px solid rgba(239, 68, 68, 0.8);
+        /* V11.0: Botones K-PAD ultra compactos */
+        #k-pad-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0.3vmin; /* V11.0: Gap mínimo */
+            width: 100%;
+            max-width: 14vmin; /* V11.0: Reducido al máximo manteniendo usabilidad */
+        }
+        
+        /* V12.0: Botones K-PAD con gradientes animados (MEJORA VISUAL 2) */
+        .k-pad-btn {
+            background: linear-gradient(135deg, rgba(25, 52, 120, 0.95) 0%, rgba(50, 110, 220, 0.8) 100%);
+            background-size: 200% 200%;
+            border: 1.5px solid rgba(59, 130, 246, 0.8);
             color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 6vmin;
+            font-size: clamp(0.9rem, 3vmin, 1.5rem);
+            font-weight: 900;
+            cursor: pointer;
+            /* V12.0: Transiciones mejoradas (MEJORA VISUAL 3) */
+            transition: all var(--transition-normal) var(--transition-smooth);
+            border-radius: 0.3rem;
+            box-shadow: 
+                0 2px 6px rgba(0, 0, 0, 0.5), 
+                inset 0 1px 2px rgba(255, 255, 255, 0.25),
+                0 0 8px rgba(59, 130, 246, 0.35);
+            aspect-ratio: 1;
+            user-select: none;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* V12.0: Efecto de brillo animado en botones (MEJORA VISUAL 2) */
+        .k-pad-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+        
+        .k-pad-btn:hover::before {
+            top: 150%;
+            left: 150%;
+        }
+        
+        /* V12.0: Hover mejorado con gradiente animado (MEJORA VISUAL 2 y 3) */
+        .k-pad-btn:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(251, 191, 36, 0.85) 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s ease-in-out infinite;
+            box-shadow: 
+                var(--shadow-neon-blue), 
+                var(--shadow-neon-gold),
+                0 5px 10px rgba(0, 0, 0, 0.6),
+                inset 0 1px 3px rgba(255, 255, 255, 0.4);
+            transform: scale(1.08) translateY(-2px);
+            border-color: rgba(251, 191, 36, 0.9);
+        }
+        
+        .k-pad-btn:active {
+            transform: scale(0.92);
+            box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .k-pad-btn-up { 
+            grid-column: 2; 
+            grid-row: 1;
+        }
+        
+        .k-pad-btn-left { 
+            grid-column: 1; 
+            grid-row: 2;
+        }
+        
+        .k-pad-btn-reset { 
+            grid-column: 2; 
+            grid-row: 2;
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            border-color: rgba(239, 68, 68, 1);
+            font-size: clamp(0.85rem, 2.8vmin, 1.4rem); /* V11.0: Reducido */
+            animation: pulseShadowKpad 2s ease-in-out infinite;
+            font-weight: 900;
+        }
+        
+        .k-pad-btn-right { 
+            grid-column: 3; 
+            grid-row: 2;
+        }
+        
+        .k-pad-btn-down { 
+            grid-column: 2; 
+            grid-row: 3;
+        }
+        
+        @keyframes pulseShadowKpad {
+            0%, 100% {
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 15px rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 25px rgba(239, 68, 68, 0.7);
+            }
+        }
+        
+        .k-pad-btn-reset:hover {
+            background: linear-gradient(135deg, #dc2626 0%, var(--color-error) 100%);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.8), 0 4px 10px rgba(0, 0, 0, 0.4);
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .k-pad-btn-reset:active {
+            transform: scale(0.9) rotate(-5deg);
+        }
+        
+        /* V11.0: BOTÓN SALIR COMPACTO */
+        .k-pad-btn-exit {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.9) 0%, rgba(245, 158, 11, 0.95) 100%);
+            border: 2px solid rgba(251, 191, 36, 0.9);
+            color: var(--color-darker);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.1vmin;
+            padding: 0.4vmin 0.6vmin; /* V11.0: Padding ultra compacto */
             font-weight: 900;
             cursor: pointer;
             transition: all var(--transition-fast);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(239, 68, 68, 0.4);
-            /* MEJORA VISUAL 6: Efecto de pulso constante */
-            animation: pulseShadow 2s ease-in-out infinite;
+            border-radius: 0.4rem;
+            box-shadow: 
+                0 3px 8px rgba(0, 0, 0, 0.5), 
+                inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                0 0 12px rgba(251, 191, 36, 0.4);
+            user-select: none;
+            margin-top: 0.4vmin; /* V11.0: Margen reducido */
         }
         
-        /* MEJORA VISUAL 7: Animación de pulso en sombra */
-        @keyframes pulseShadow {
-            0%, 100% {
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(239, 68, 68, 0.4);
-            }
-            50% {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 35px rgba(239, 68, 68, 0.7);
-            }
+        .k-pad-btn-exit .exit-icon {
+            font-size: clamp(0.9rem, 2.5vmin, 1.3rem); /* V11.0: Reducido */
+            line-height: 1;
         }
         
-        #reset-button:hover {
-            background: linear-gradient(135deg, #dc2626 0%, var(--color-error) 100%);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 0 30px rgba(239, 68, 68, 0.7);
-            transform: scale(1.1) rotate(15deg);
+        .k-pad-btn-exit .exit-text {
+            font-size: clamp(0.5rem, 1.4vmin, 0.7rem); /* V11.0: Reducido */
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
         
-        #reset-button:active {
-            transform: scale(0.95) rotate(-15deg);
+        .k-pad-btn-exit:hover {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 1) 0%, rgba(251, 146, 60, 1) 100%);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 0 25px rgba(251, 191, 36, 0.8),
+                0 6px 15px rgba(0, 0, 0, 0.6),
+                inset 0 1px 3px rgba(255, 255, 255, 0.5);
+            border-color: rgba(251, 191, 36, 1);
+        }
+        
+        .k-pad-btn-exit:active {
+            transform: scale(0.96);
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
         }
         
         #game-container {
@@ -1376,23 +1776,27 @@
         }
         
         /* ============================================
-           RESPONSIVE (ORIENTACIÓN VERTICAL)
+           📱 RESPONSIVE V12.0 - OPTIMIZACIÓN DE CÓDIGO 3
            ============================================ */
         @media (orientation: portrait) {
             #screen-juego {
                 flex-direction: column;
             }
             
+            /* V12.0: HUD adaptativo en móviles */
             #side-hud {
                 width: 100%;
                 max-width: none;
+                height: auto;
                 max-height: 30vh;
+                overflow-y: auto;
             }
             
+            /* V12.0: Grid adaptado a vertical */
             #game-grid {
                 width: 95vw;
                 height: auto;
-                max-height: 85vh;
+                max-height: 60vh;
                 aspect-ratio: 9 / 15;
                 grid-template-columns: repeat(9, 1fr);
                 grid-template-rows: repeat(15, 1fr);
@@ -1402,10 +1806,38 @@
                 font-size: clamp(0.8rem, 4vw, 1.5rem);
             }
             
+            /* V12.0: Grilla de niveles optimizada */
             #levels-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 1vmin;
                 padding: 0.5vmin;
+            }
+            
+            /* V12.0: K-PAD más grande en móviles */
+            #k-pad-buttons {
+                max-width: 20vmin;
+            }
+        }
+        
+        /* V12.0: Breakpoint para pantallas pequeñas (OPTIMIZACIÓN 3) */
+        @media (max-width: 768px) {
+            #side-hud {
+                width: 28vmin;
+            }
+            
+            .hud-stat {
+                padding: 0.6vmin 0.8vmin;
+            }
+        }
+        
+        /* V12.0: Breakpoint para pantallas grandes (OPTIMIZACIÓN 3) */
+        @media (min-width: 1920px) {
+            #side-hud {
+                max-width: 320px;
+            }
+            
+            #k-pad-buttons {
+                max-width: 16vmin;
             }
         }
         
@@ -1504,6 +1936,10 @@
                         <div class="hud-stat-label">Nivel Actual</div>
                         <div class="hud-stat-value" id="side-level">1</div>
                     </div>
+                    <div class="hud-stat timer-display">
+                        <div class="hud-stat-label">⏱ TIEMPO</div>
+                        <div class="hud-stat-value" id="side-timer">00:00:00</div>
+                    </div>
                     <div class="hud-stat">
                         <div class="hud-stat-label">Movimientos</div>
                         <div class="hud-stat-value" id="side-moves">0</div>
@@ -1513,18 +1949,30 @@
                         <div class="hud-stat-value" id="side-pushes">0</div>
                     </div>
                     <div class="hud-stat">
-                        <div class="hud-stat-label">Bloques en Posición</div>
-                        <div class="hud-stat-value" id="side-blocks-placed">0 / 8</div>
+                        <div class="hud-stat-label">Bloques OK</div>
+                        <div class="hud-stat-value" id="side-blocks-placed">0/8</div>
                     </div>
                     <div class="hud-stat">
-                        <div class="hud-stat-label">Puntuación</div>
+                        <div class="hud-stat-label">Puntos</div>
                         <div class="hud-stat-value" id="side-score">0</div>
                     </div>
                 </div>
                 
                 <div id="k-pad">
                     <div id="k-pad-title">⌨ K-PAD</div>
-                    <div id="reset-button" title="Resetear Nivel">R</div>
+                    <div id="k-pad-buttons">
+                        <div class="k-pad-btn k-pad-btn-up" data-direction="up" title="Arriba">▲</div>
+                        <div class="k-pad-btn k-pad-btn-left" data-direction="left" title="Izquierda">◄</div>
+                        <div class="k-pad-btn k-pad-btn-reset" id="k-pad-reset" title="Resetear Nivel">R</div>
+                        <div class="k-pad-btn k-pad-btn-right" data-direction="right" title="Derecha">►</div>
+                        <div class="k-pad-btn k-pad-btn-down" data-direction="down" title="Abajo">▼</div>
+                    </div>
+                </div>
+                
+                <!-- BOTÓN PARA SALIR AL MENÚ DE NIVELES -->
+                <div id="exit-level-btn" class="k-pad-btn-exit" title="Volver al Menú de Niveles">
+                    <span class="exit-icon">🚪</span>
+                    <span class="exit-text">SALIR</span>
                 </div>
             </div>
         </div>
@@ -1532,6 +1980,7 @@
         <!-- Pantalla de Victoria -->
         <div id="screen-victoria" class="screen">
             <h1>¡VICTORIA!</h1>
+            <div id="victory-stars"></div>
             <div id="victory-stats">
                 <div id="victory-score">PUNTUACIÓN: <span>0</span></div>
                 <div id="victory-moves">MOVIMIENTOS: <span>0</span></div>
@@ -1570,13 +2019,15 @@
             levelData: [],
             inGame: false,
             savedGameScreen: null,
-            soundEnabled: false,  // CORREGIDO: Ahora empieza en OFF
+            soundEnabled: false,
             startTime: 0,
             errors: 0,
             perfectPlacement: true,
-            blocksPlaced: {},  // NUEVO: Rastrear bloques ya colocados para evitar animación repetida
-            wrongBlocks: {},  // NUEVO: Rastrear bloques equivocados para evitar animación repetida
-            score: 0
+            blocksPlaced: {},
+            wrongBlocks: {},
+            score: 0,
+            timerInterval: null, // NUEVO V8: Intervalo del cronómetro
+            elapsedTime: 0 // NUEVO V8: Tiempo transcurrido en segundos
         };
         
         var screens = {
@@ -1828,16 +2279,25 @@
         function generateRandomEntities(isPortraitMode) {
             var gridWidth = isPortraitMode ? 9 : 14;
             var gridHeight = isPortraitMode ? 15 : 9;
-            var minDistance = 2;
+            var minDistance = 2; // CORREGIDO V9: Distancia mínima del borde
             
             var usedPositions = [];
+            var baseLayout = isPortraitMode ? levelLayoutsPortrait[0] : levelLayouts[0];
             
             function isPositionValid(x, y) {
+                // CORREGIDO V9: Verificar que NO esté en el borde
                 if (x < minDistance || x >= gridWidth - minDistance || 
                     y < minDistance || y >= gridHeight - minDistance) {
                     return false;
                 }
                 
+                // CORREGIDO V9: Verificar que NO esté sobre una celda destino (TARGET)
+                var baseValue = baseLayout[y][x];
+                if (baseValue >= CELL_TYPE.TARGET_BASE) {
+                    return false;
+                }
+                
+                // Verificar que la posición no esté ocupada
                 for (var i = 0; i < usedPositions.length; i++) {
                     if (usedPositions[i].x === x && usedPositions[i].y === y) {
                         return false;
@@ -1849,9 +2309,10 @@
             
             function getRandomPosition() {
                 var attempts = 0;
-                var maxAttempts = 100;
+                var maxAttempts = 200; // Aumentado para dar más intentos
                 
                 while (attempts < maxAttempts) {
+                    // CORREGIDO V9: Generar dentro del rango válido
                     var x = minDistance + Math.floor(Math.random() * (gridWidth - 2 * minDistance));
                     var y = minDistance + Math.floor(Math.random() * (gridHeight - 2 * minDistance));
                     
@@ -1863,6 +2324,7 @@
                     attempts++;
                 }
                 
+                // Fallback: intentar el centro
                 return { x: Math.floor(gridWidth / 2), y: Math.floor(gridHeight / 2) };
             }
             
@@ -1880,11 +2342,27 @@
             };
         }
         
+        // NUEVO V9.1: Verificar si un nivel está desbloqueado
+        function isLevelUnlocked(levelIndex, progress) {
+            // El primer nivel siempre está desbloqueado
+            if (levelIndex === 0) {
+                return true;
+            }
+            // Los demás niveles requieren que el anterior esté completado
+            return progress[levelIndex - 1].completed === true;
+        }
+        
         function populateLevelsScreen() {
             var grid = document.getElementById('levels-grid');
+            if (!grid) {
+                console.error('No se encontró el elemento levels-grid');
+                return;
+            }
+            
             grid.innerHTML = '';
             
             var progress = getCurrentPlayerProgress();
+            console.log('Creando botones para', levelPuzzles.length, 'niveles'); // DEBUG
             
             for (var i = 0; i < levelPuzzles.length; i++) {
                 var puzzle = levelPuzzles[i];
@@ -1892,9 +2370,31 @@
                 levelBtn.className = 'level-button';
                 levelBtn.setAttribute('data-level-index', i);
                 
+                // NUEVO V9.1: Verificar si el nivel está desbloqueado
+                var unlocked = isLevelUnlocked(i, progress);
+                
+                if (!unlocked) {
+                    levelBtn.classList.add('locked');
+                    levelBtn.style.cursor = 'not-allowed';
+                } else {
+                    levelBtn.style.cursor = 'pointer';
+                }
+                
                 if (progress[i].completed) {
                     levelBtn.classList.add('completed');
                 }
+                
+                // NUEVO V8: Mostrar estrellas
+                var starsContainer = document.createElement('div');
+                starsContainer.className = 'level-stars';
+                var stars = progress[i].stars || 0;
+                for (var s = 0; s < 3; s++) {
+                    var star = document.createElement('span');
+                    star.className = 'star' + (s < stars ? '' : ' empty');
+                    star.textContent = s < stars ? '★' : '☆';
+                    starsContainer.appendChild(star);
+                }
+                levelBtn.appendChild(starsContainer);
                 
                 var title = document.createElement('div');
                 title.className = 'level-title';
@@ -1914,6 +2414,8 @@
                 
                 grid.appendChild(levelBtn);
             }
+            
+            console.log('Botones de nivel creados:', grid.children.length); // DEBUG
         }
         
         function savePlayersList() {
@@ -1972,7 +2474,7 @@
             if (!profiles[gameState.currentPlayer]) {
                 var initialProgress = [];
                 for (var i = 0; i < levelPuzzles.length; i++) {
-                    initialProgress.push({ completed: false, moves: null, score: 0 });
+                    initialProgress.push({ completed: false, moves: null, score: 0, stars: 0 });
                 }
                 profiles[gameState.currentPlayer] = { 
                     progress: initialProgress,
@@ -1984,15 +2486,18 @@
             if (currentProgress.length < levelPuzzles.length) {
                 var diff = levelPuzzles.length - currentProgress.length;
                 for (var j = 0; j < diff; j++) {
-                    currentProgress.push({ completed: false, moves: null, score: 0 });
+                    currentProgress.push({ completed: false, moves: null, score: 0, stars: 0 });
                 }
             }
             
-            if (!profiles[gameState.currentPlayer].achievements) {
-                profiles[gameState.currentPlayer].achievements = JSON.parse(JSON.stringify(achievementsDefs));
+            // NUEVO V8: Asegurar que todos los niveles tengan el campo stars
+            for (var k = 0; k < currentProgress.length; k++) {
+                if (typeof currentProgress[k].stars === 'undefined') {
+                    currentProgress[k].stars = 0;
+                }
             }
             
-            return profiles[gameState.currentPlayer].progress;
+            return currentProgress;
         }
         
         function updateStartButton() {
@@ -2119,7 +2624,7 @@
                 }
             }
             
-            document.getElementById('side-blocks-placed').textContent = correctBlocks + ' / ' + totalBlocks;
+            document.getElementById('side-blocks-placed').textContent = correctBlocks + '/' + totalBlocks;
         }
         
         function calculateScore() {
@@ -2199,6 +2704,56 @@
             return newUnlocks;
         }
         
+        // NUEVO V9: Funciones del cronómetro
+        function formatTime(seconds) {
+            var hours = Math.floor(seconds / 3600);
+            var minutes = Math.floor((seconds % 3600) / 60);
+            var secs = seconds % 60;
+            
+            var hh = hours < 10 ? '0' + hours : hours;
+            var mm = minutes < 10 ? '0' + minutes : minutes;
+            var ss = secs < 10 ? '0' + secs : secs;
+            
+            return hh + ':' + mm + ':' + ss;
+        }
+        
+        function startTimer() {
+            gameState.elapsedTime = 0;
+            gameState.timerInterval = setInterval(function() {
+                gameState.elapsedTime++;
+                var timerDisplay = document.getElementById('side-timer');
+                if (timerDisplay) {
+                    timerDisplay.textContent = formatTime(gameState.elapsedTime);
+                }
+            }, 1000);
+        }
+        
+        function stopTimer() {
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+                gameState.timerInterval = null;
+            }
+        }
+        
+        function calculateStars() {
+            var timeElapsed = gameState.elapsedTime;
+            var moves = gameState.moves;
+            var errors = gameState.errors;
+            
+            // ⭐⭐⭐ Perfecto: < 30 movimientos, < 60 segundos, sin errores
+            if (moves < 30 && timeElapsed < 60 && errors === 0) {
+                return 3;
+            }
+            // ⭐⭐ Bueno: < 50 movimientos, < 120 segundos, < 5 errores
+            else if (moves < 50 && timeElapsed < 120 && errors < 5) {
+                return 2;
+            }
+            // ⭐ Completado
+            else {
+                return 1;
+            }
+        }
+        
         function loadLevel(levelIndex) {
             var layout = isPortrait ? levelLayoutsPortrait[0] : levelLayouts[0];
             var puzzle = levelPuzzles[levelIndex];
@@ -2216,19 +2771,35 @@
             };
             gameState.levelData[entities.avatar.y][entities.avatar.x] = CELL_TYPE.AVATAR;
             
+            // CORREGIDO V8: Colocar bloques y marcar los que caen en celdas destino equivocadas
             for (var j = 0; j < entities.blocks.length; j++) {
                 var block = entities.blocks[j];
                 gameState.levelData[block.y][block.x] = block.id;
+                
+                // Verificar si el bloque cayó en una celda destino
+                var baseValue = layout[block.y][block.x];
+                if (baseValue >= CELL_TYPE.TARGET_BASE) {
+                    var expectedBlock = baseValue - 20;
+                    // Si NO es el bloque correcto, marcarlo como equivocado desde el inicio
+                    if (block.id !== expectedBlock) {
+                        var wrongKey = block.id + '_' + block.y + '_' + block.x;
+                        gameState.wrongBlocks[wrongKey] = true;
+                        gameState.errors++;
+                        gameState.perfectPlacement = false;
+                    }
+                }
             }
             
             gameState.moves = 0;
             gameState.pushes = 0;
-            gameState.errors = 0;
-            gameState.perfectPlacement = true;
-            gameState.blocksPlaced = {};  // NUEVO: Resetear bloques colocados
-            gameState.wrongBlocks = {};  // NUEVO: Resetear bloques equivocados
+            // gameState.errors ya fue actualizado arriba si hubo bloques en destinos equivocados
+            gameState.blocksPlaced = {};
+            // gameState.wrongBlocks ya fue actualizado arriba
             gameState.startTime = Date.now();
             gameState.score = 0;
+            
+            // NUEVO V8: Iniciar cronómetro
+            startTimer();
             
             render();
             updateSideHud();
@@ -2441,28 +3012,48 @@
                 }
             }
             
+            // NUEVO V8: Detener cronómetro
+            stopTimer();
+            
             gameState.inGame = false;
             playSound('victory');
             
             var scoreData = calculateScore();
             gameState.score = scoreData.total;
             
+            // NUEVO V8: Calcular estrellas
+            var stars = calculateStars();
+            
             var progress = getCurrentPlayerProgress();
             progress[gameState.currentLevel].completed = true;
             progress[gameState.currentLevel].moves = gameState.moves;
             progress[gameState.currentLevel].score = scoreData.total;
+            
+            // NUEVO V8: Guardar estrellas (mantener el máximo)
+            if (!progress[gameState.currentLevel].stars || stars > progress[gameState.currentLevel].stars) {
+                progress[gameState.currentLevel].stars = stars;
+            }
+            
             saveProfiles();
             
             var newAchievements = checkAchievements(scoreData);
             
-            var timeMinutes = Math.floor(scoreData.timeElapsed / 60);
-            var timeSeconds = scoreData.timeElapsed % 60;
-            var timeString = timeMinutes + ':' + (timeSeconds < 10 ? '0' : '') + timeSeconds;
+            // NUEVO V8: Mostrar estrellas animadas
+            var starsHtml = '';
+            for (var s = 0; s < 3; s++) {
+                if (s < stars) {
+                    starsHtml += '<span class="victory-star">★</span>';
+                } else {
+                    starsHtml += '<span class="victory-star empty">☆</span>';
+                }
+            }
+            document.getElementById('victory-stars').innerHTML = starsHtml;
             
+            // Actualizar estadísticas con tiempo formateado
             document.querySelector('#victory-score span').textContent = scoreData.total;
             document.querySelector('#victory-moves span').textContent = gameState.moves;
             document.querySelector('#victory-pushes span').textContent = gameState.pushes;
-            document.querySelector('#victory-time span').textContent = timeString;
+            document.querySelector('#victory-time span').textContent = formatTime(gameState.elapsedTime);
             
             var bonusesEl = document.getElementById('victory-bonuses');
             bonusesEl.innerHTML = '';
@@ -2479,6 +3070,13 @@
                 perfectBonusDiv.className = 'victory-bonus';
                 perfectBonusDiv.textContent = '⭐ Colocación Perfecta: +' + scoreData.perfectBonus;
                 bonusesEl.appendChild(perfectBonusDiv);
+            }
+            
+            if (stars === 3) {
+                var perfectDiv = document.createElement('div');
+                perfectDiv.className = 'victory-bonus';
+                perfectDiv.textContent = '👑 ¡NIVEL PERFECTO - 3 ESTRELLAS!';
+                bonusesEl.appendChild(perfectDiv);
             }
             
             if (newAchievements.length > 0) {
@@ -2716,17 +3314,49 @@
         document.getElementById('return-menu').addEventListener('click', function() {
             playSound('click');
             gameState.inGame = false;
+            stopTimer(); // NUEVO V8: Detener cronómetro al salir
             showScreen('levels');
             populateLevelsScreen();
             document.getElementById('settings-dropdown').classList.remove('active');
         });
         
-        document.getElementById('reset-button').addEventListener('click', function() {
+        // MEJORA V9: Event listeners para los botones del K-PAD
+        document.getElementById('k-pad-reset').addEventListener('click', function() {
             playSound('click');
             if (gameState.inGame) {
+                stopTimer();
                 loadLevel(gameState.currentLevel);
             }
         });
+        
+        // NUEVO: Event listener para el botón de salir al menú
+        document.getElementById('exit-level-btn').addEventListener('click', function() {
+            playSound('click');
+            gameState.inGame = false;
+            stopTimer();
+            showScreen('levels');
+            populateLevelsScreen();
+        });
+        
+        var kPadButtons = document.querySelectorAll('.k-pad-btn[data-direction]');
+        for (var i = 0; i < kPadButtons.length; i++) {
+            kPadButtons[i].addEventListener('click', function() {
+                if (!gameState.inGame) return;
+                
+                var direction = this.getAttribute('data-direction');
+                playSound('move');
+                
+                if (direction === 'up') {
+                    handleInput(0, -1);
+                } else if (direction === 'down') {
+                    handleInput(0, 1);
+                } else if (direction === 'left') {
+                    handleInput(-1, 0);
+                } else if (direction === 'right') {
+                    handleInput(1, 0);
+                }
+            });
+        }
         
         // MEJORA V7.1: Menú de configuración para pantalla de niveles
         document.getElementById('levels-settings-button').addEventListener('click', function(e) {
@@ -2769,20 +3399,48 @@
             }
         });
         
-        document.getElementById('levels-grid').addEventListener('click', function(e) {
-            var levelButton = e.target.closest('.level-button');
-            if (!levelButton) return;
-            
-            playSound('click');
-            
-            var levelIndex = parseInt(levelButton.getAttribute('data-level-index'));
-            gameState.currentLevel = levelIndex;
-            
-            loadLevel(levelIndex);
-            showScreen('juego');
-            gameState.inGame = true;
-            updateSideHud();
-        });
+        // CORREGIDO V9.1: Event listener con validación de nivel desbloqueado
+        var levelsGridElement = document.getElementById('levels-grid');
+        if (levelsGridElement) {
+            levelsGridElement.addEventListener('click', function(e) {
+                var levelButton = e.target.closest('.level-button');
+                if (!levelButton) return;
+                
+                // NUEVO V9.1: No hacer nada si el nivel está bloqueado
+                if (levelButton.classList.contains('locked')) {
+                    playSound('error');
+                    console.log('Nivel bloqueado'); // DEBUG
+                    return;
+                }
+                
+                playSound('click');
+                
+                var levelIndex = parseInt(levelButton.getAttribute('data-level-index'));
+                console.log('Nivel seleccionado:', levelIndex); // DEBUG
+                
+                if (isNaN(levelIndex) || levelIndex < 0 || levelIndex >= levelPuzzles.length) {
+                    console.error('Índice de nivel inválido:', levelIndex);
+                    return;
+                }
+                
+                // NUEVO V9.1: Doble verificación de desbloqueo
+                var progress = getCurrentPlayerProgress();
+                if (!isLevelUnlocked(levelIndex, progress)) {
+                    playSound('error');
+                    console.log('Nivel no desbloqueado'); // DEBUG
+                    return;
+                }
+                
+                gameState.currentLevel = levelIndex;
+                
+                loadLevel(levelIndex);
+                showScreen('juego');
+                gameState.inGame = true;
+                updateSideHud();
+            });
+        } else {
+            console.error('No se encontró el elemento levels-grid');
+        }
         
         document.addEventListener('keydown', function(e) {
             if (!gameState.inGame) return;
