@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Juego Sokoban educativo - Números y Letras">
+    <title>SOKOBAN ENGINE MEJORADO V7.1 - HUD CORREGIDO + MENÚ CONFIG</title>
+    <!--
+    =========================================================================
+    SOKOBAN ENGINE V7.1 - CHANGELOG DE MEJORAS
+    =========================================================================
+    
+    🔧 CORRECCIONES DE CÓDIGO (7):
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    1. **FIX CRÍTICO - HUD Overflow**: 
+       - Añadido max-height: calc(100vh - 2vmin) al #side-hud
+       - Previene que los elementos se salgan por la parte inferior
+       - El HUD ahora respeta los límites del viewport
+    
+    2. **Contenedor Scrolleable**: 
+       - Nuevo div #side-hud-stats-container con overflow-y: auto
+       - Las estadísticas tienen scroll independiente
+       - K-PAD siempre visible en la parte inferior con margin-top: auto
+    
+    3. **Mejora de Estructura**:
+       - flex-shrink: 0 en título y K-PAD para mantener tamaño fijo
+       - flex: 1 en contenedor de stats para ocupar espacio disponible
+       - Mejor organización del código con comentarios descriptivos
+    
+    4. **Optimización de Layout**:
+       - overflow: hidden en #side-hud para prevenir desbordamiento
+       - height: 100% para usar toda la altura del contenedor padre
+       - Estructura flexbox mejorada para distribución correcta
+    
+    5. **NUEVO - Menú de Configuración en Niveles**:
+       - Engranaje flotante en esquina superior derecha de pantalla de niveles
+       - Menú desplegable con opciones de Sonido y Salir
+       - Animación dropdownSlideIn al abrir el menú
+    
+    6. **NUEVO - Funcionalidad de Salir**:
+       - Opción para cerrar el navegador desde el menú
+       - Confirmación antes de cerrar
+       - Mensaje alternativo si el navegador no permite cierre automático
+    
+    7. **Sincronización de Sonido**:
+       - Los dos menús (juego y niveles) comparten el estado de sonido
+       - Actualización sincronizada entre ambas pantallas
+    
+    
+    ✨ MEJORAS VISUALES (8):
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    1. **Título con Gradiente Animado**:
+       - Efecto shimmer en el título "REPORTES"
+       - Gradiente que se desplaza suavemente
+       - Animación @keyframes shimmerTitle de 3 segundos
+    
+    2. **Scrollbar Personalizado**:
+       - Scrollbar estilizado que combina con el tema del juego
+       - Color azul secundario con hover effect
+       - Track semi-transparente para mejor integración
+    
+    3. **Animación de Entrada**:
+       - fadeInUp para cada estadística al cargar
+       - Efecto de aparición suave desde abajo
+       - Duración de 0.4s para fluidez
+    
+    4. **Hover Mejorado en Stats**:
+       - Cambio de color de fondo al pasar el mouse
+       - Efecto de desplazamiento lateral (translateX)
+       - Sombra con glow azul al hacer hover
+    
+    5. **Pulso en Botón Reset**:
+       - Animación pulseShadow constante (2s infinite)
+       - La sombra crece y decrece suavemente
+       - Llama más la atención sin ser molesto
+    
+    6. **NUEVO - Título NIVELES Mejorado**:
+       - Gradiente multicolor más brillante (azul → amarillo → verde)
+       - Animación de brillo más intensa (drop-shadow mejorado)
+       - Texto más grueso (font-weight: 900) con mejor espaciado
+    
+    7. **NUEVO - Textos de Niveles Más Visibles**:
+       - Títulos de nivel en amarillo brillante con text-shadow
+       - Descripciones en azul más claro con mejor contraste
+       - Font-weight aumentado para mejor legibilidad
+    
+    8. **NUEVO - Engranaje Animado**:
+       - Botón de configuración más grande (10vmin)
+       - Rotación de 90° al hover con escala 1.15
+       - Glow azul intenso que llama la atención
+       - Menú desplegable con animación de deslizamiento
+    
+    
+    📊 RESULTADO:
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ✅ HUD completamente funcional sin overflow
+    ✅ Menú de configuración accesible desde pantalla de niveles
+    ✅ Textos mucho más visibles con mejor contraste
+    ✅ Diseño más pulido y profesional
+    ✅ Mejor experiencia de usuario
+    ✅ Animaciones sutiles que mejoran la percepción
+    ✅ Código mejor organizado y documentado
+    ✅ Opción de salir del juego implementada
+    
+    =========================================================================
+    -->
+    <style>
+        /* ============================================
+           VARIABLES GLOBALES Y RESETEO
+           ============================================ */
+        :root {
+            --color-primary: #1e3a8a;
+            --color-secondary: #3b82f6;
+            --color-accent: #fbbf24;
+            --color-success: #10b981;
+            --color-error: #ef4444;
+            --color-dark: #0f172a;
+            --color-darker: #020617;
+            --color-light: #f1f5f9;
+            --color-muted: #64748b;
+            --shadow-glow: 0 0 10px;
+            --shadow-strong: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+            --transition-slow: 0.5s;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* ============================================
+           ESTILOS BASE
+           ============================================ */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--color-darker) 0%, var(--color-dark) 50%, #1e293b 100%);
+            color: var(--color-light);
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        /* ============================================
+           EFECTOS CRT (PANTALLA RETRO)
+           ============================================ */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(
+                rgba(59, 130, 246, 0.03) 50%, 
+                rgba(0, 0, 0, 0.4) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 16, 16, 0.1);
+            animation: flicker 0.15s infinite;
+            z-index: 1001;
+            pointer-events: none;
+        }
+        
+        /* ============================================
+           ANIMACIONES
+           ============================================ */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.2; }
+            20% { opacity: 0.8; }
+            40% { opacity: 0.3; }
+            60% { opacity: 0.9; }
+            80% { opacity: 0.2; }
+            100% { opacity: 0.7; }
+        }
+        
+        @keyframes breathingGlow {
+            0% {
+                filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.8));
+            }
+            100% {
+                filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+            }
+        }
+        
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes trailFade {
+            0% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+        
+        @keyframes targetPulse {
+            0%, 100% {
+                border-color: rgba(251, 191, 36, 0.3);
+                box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.2);
+            }
+            50% {
+                border-color: rgba(251, 191, 36, 0.8);
+                box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.5);
+            }
+        }
+        
+        @keyframes celebration {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            20% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            40% {
+                transform: scale(0.9) rotate(-10deg);
+            }
+            60% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            80% {
+                transform: scale(0.95) rotate(-5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        /* ============================================
+           PANTALLAS (SCREENS)
+           ============================================ */
+        .screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2vmin;
+            animation: fadeIn var(--transition-slow) ease-in-out;
+            gap: 2vmin;
+            overflow: hidden;
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        /* ============================================
+           TIPOGRAFÍA
+           ============================================ */
+        h1 {
+            font-size: clamp(2rem, 10vmin, 6rem);
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 50%, var(--color-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+            text-align: center;
+            margin: 1vmin 0;
+            font-weight: 800;
+        }
+        
+        h2 {
+            font-size: clamp(1rem, 4vmin, 2rem);
+            text-transform: uppercase;
+            color: var(--color-accent);
+            text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+            text-align: center;
+            margin-bottom: 2vmin;
+            font-weight: 600;
+        }
+        
+        /* ============================================
+           BOTONES
+           ============================================ */
+        .button {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border: none;
+            color: white;
+            padding: 2vmin 4vmin;
+            font-size: clamp(0.8rem, 4vmin, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin: 2vmin;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-strong), 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .button:hover::before {
+            left: 100%;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-strong), 0 0 30px rgba(59, 130, 246, 0.5);
+        }
+        
+        .button:active {
+            transform: scale(0.96);
+        }
+        
+        .button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+        
+        .button:disabled:hover {
+            transform: none;
+            box-shadow: var(--shadow-strong);
+        }
+        
+        .button-small {
+            padding: 1vmin 2vmin;
+            font-size: clamp(0.6rem, 2.5vmin, 1rem);
+            margin: 1vmin;
+        }
+        
+        /* ============================================
+           PANTALLA DE TÍTULO
+           ============================================ */
+        #screen-title h1 {
+            animation: breathingGlow 3s infinite ease-in-out;
+        }
+        
+        /* ============================================
+           PANTALLA DE ADMINISTRACIÓN DE JUGADORES
+           ============================================ */
+        #players-list {
+            max-height: 40vh;
+            overflow-y: auto;
+            border: 2px solid var(--color-secondary);
+            background-color: rgba(15, 23, 42, 0.8);
+            padding: 2vmin;
+            width: 90vmin;
+            max-width: 95%;
+            margin: 2vmin 0;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-strong);
+        }
+        
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5vmin;
+            margin: 1vmin 0;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(30, 58, 138, 0.3);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-radius: 0.5rem;
+        }
+        
+        .player-item:hover {
+            background: rgba(59, 130, 246, 0.4);
+            border-color: var(--color-secondary);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .player-item.selected {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            color: white;
+            border-color: var(--color-accent);
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+        }
+        
+        .player-delete-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+            padding: 0.5vmin 1.5vmin;
+            font-size: clamp(0.6rem, 2vmin, 0.9rem);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-radius: 0.375rem;
+            font-weight: 600;
+        }
+        
+        .player-delete-btn:hover {
+            background: var(--color-error);
+            color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+        
+        /* ============================================
+           PANTALLA DE SELECCIÓN DE JUGADOR
+           ============================================ */
+        #player-name-display {
+            border: 2px solid var(--color-secondary);
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
+            padding: 2vmin 3vmin;
+            font-size: clamp(1rem, 6vmin, 2rem);
+            min-height: 8vmin;
+            width: 90vmin;
+            max-width: 95%;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            border-radius: 0.75rem;
+            color: var(--color-accent);
+            font-weight: 700;
+            box-shadow: var(--shadow-strong), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .shake {
+            animation: shakeError var(--transition-normal) linear;
+        }
+        
+        /* ============================================
+           TECLADO VIRTUAL
+           ============================================ */
+        #virtual-keyboard {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 1vmin;
+            width: 90vmin;
+            max-width: 95%;
+            padding: 2vmin 0;
+        }
+        
+        .key {
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(30, 58, 138, 0.4);
+            color: var(--color-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(0.8rem, 3.5vmin, 1.2rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            min-height: 8vmin;
+            text-transform: uppercase;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .key:hover {
+            border-color: var(--color-secondary);
+            background: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .key:active {
+            transform: scale(0.96);
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+            color: var(--color-dark);
+        }
+        
+        .key-enter {
+            grid-column: 7 / span 2;
+            background: rgba(16, 185, 129, 0.3);
+            border-color: var(--color-success);
+        }
+        
+        .key-enter:hover {
+            background: rgba(16, 185, 129, 0.5);
+        }
+        
+        .key-shift {
+            grid-column: 1 / span 2;
+        }
+        
+        .key-backspace {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: var(--color-error);
+        }
+        
+        .key-backspace:hover {
+            background: rgba(239, 68, 68, 0.5);
+        }
+        
+        .key.shift.active::after {
+            content: '';
+            position: absolute;
+            top: 0.5vmin;
+            right: 0.5vmin;
+            width: 1vmin;
+            height: 1vmin;
+            background-color: var(--color-accent);
+            border-radius: 50%;
+            box-shadow: 0 0 5px var(--color-accent);
+        }
+        
+        /* ============================================
+           PANTALLA DE NIVELES - ARREGLADO PARA QUE QUEPAN TODOS
+           ============================================ */
+        #levels-welcome-message {
+            display: none;
+        }
+        
+        /* MEJORA V7.1: Título de niveles más visible */
+        #screen-levels h1 {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 50%, #10b981 75%, var(--color-secondary) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: breathingGlow 3s infinite ease-in-out, shimmerTitle 4s linear infinite;
+            filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.6));
+            font-weight: 900;
+            letter-spacing: 0.1em;
+        }
+        
+        /* MEJORA V7.1: Menú de configuración global para pantalla de niveles */
+        #levels-settings-menu {
+            position: absolute;
+            top: 2vmin;
+            right: 2vmin;
+            z-index: 100;
+        }
+        
+        #levels-settings-button {
+            width: 10vmin;
+            height: 10vmin;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.4);
+            border: 3px solid var(--color-secondary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6vmin;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        #levels-settings-button:hover {
+            background: var(--color-secondary);
+            color: white;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.8);
+            transform: scale(1.15) rotate(90deg);
+        }
+        
+        #levels-settings-button:active {
+            transform: scale(0.95) rotate(0deg);
+        }
+        
+        #levels-settings-dropdown {
+            position: absolute;
+            top: 110%;
+            right: 0;
+            margin-top: 1vmin;
+            background: rgba(15, 23, 42, 0.98);
+            border: 2px solid var(--color-secondary);
+            border-radius: 0.75rem;
+            padding: 1.5vmin;
+            min-width: 35vmin;
+            display: none;
+            flex-direction: column;
+            gap: 1vmin;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.4);
+            z-index: 101;
+        }
+        
+        #levels-settings-dropdown.active {
+            display: flex;
+            animation: dropdownSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes dropdownSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .levels-settings-option {
+            padding: 2vmin 2.5vmin;
+            background: rgba(30, 58, 138, 0.5);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: clamp(0.8rem, 3vmin, 1.2rem);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--color-light);
+        }
+        
+        .levels-settings-option:hover {
+            background: rgba(59, 130, 246, 0.6);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: translateX(-3px);
+        }
+        
+        .levels-settings-option .option-icon {
+            font-size: 4vmin;
+            margin-right: 1vmin;
+        }
+        
+        #levels-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8vmin;
+            width: 100%;
+            max-width: 95%;
+            padding: 0.5vmin;
+            overflow: hidden;
+            max-height: 70vh;
+        }
+        
+        .level-button {
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+            padding: 1vmin 0.8vmin;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-size: clamp(0.55rem, 1.6vmin, 0.85rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.2vmin;
+            position: relative;
+            border-radius: 0.4rem;
+            box-shadow: var(--shadow-strong);
+            min-height: 0;
+            height: 15vh;
+        }
+        
+        .level-button:hover {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-strong), 0 0 20px rgba(59, 130, 246, 0.5);
+            border-color: var(--color-accent);
+        }
+        
+        .level-button .level-title {
+            font-size: clamp(0.7rem, 2.2vmin, 1.1rem);
+            font-weight: 800;
+            color: var(--color-accent);
+            line-height: 1.2;
+            text-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
+            letter-spacing: 0.05em;
+        }
+        
+        .level-button:hover .level-title {
+            color: white;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
+        }
+        
+        .level-button .level-desc {
+            font-size: clamp(0.55rem, 1.6vmin, 0.85rem);
+            color: var(--color-secondary);
+            line-height: 1.2;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(59, 130, 246, 0.4);
+        }
+        
+        .level-button:hover .level-desc {
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 6px rgba(255, 255, 255, 0.6);
+        }
+        
+        .level-button.completed {
+            border-color: var(--color-success);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(30, 58, 138, 0.4) 100%);
+        }
+        
+        .level-button.completed::before {
+            content: '✓';
+            position: absolute;
+            top: 0.3vmin;
+            right: 0.3vmin;
+            font-size: 2vmin;
+            color: var(--color-success);
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            width: 3.5vmin;
+            height: 3.5vmin;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .level-progress {
+            font-size: clamp(0.5rem, 1.6vmin, 0.8rem);
+            color: var(--color-secondary);
+            line-height: 1.2;
+            font-weight: 700;
+            text-shadow: 0 1px 3px rgba(59, 130, 246, 0.5);
+        }
+        
+        .level-button:hover .level-progress {
+            color: white;
+            text-shadow: 0 2px 6px rgba(255, 255, 255, 0.6);
+        }
+        
+        /* ============================================
+           PANTALLA DE JUEGO
+           ============================================ */
+        #screen-juego {
+            gap: 1vmin;
+            padding: 1vmin;
+            flex-direction: row;
+            align-items: stretch;
+        }
+        
+        #game-main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1vmin;
+        }
+        
+        #hud {
+            display: none;
+        }
+        
+        /* ENGRANAJE CON MENÚ DESPLEGABLE */
+        #settings-menu {
+            position: absolute;
+            top: 1vmin;
+            right: 1vmin;
+            z-index: 100;
+        }
+        
+        #settings-button {
+            width: 8vmin;
+            height: 8vmin;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            border: 2px solid var(--color-secondary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5vmin;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        #settings-button:hover {
+            background: var(--color-secondary);
+            color: white;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+            transform: scale(1.1) rotate(90deg);
+        }
+        
+        #settings-button:active {
+            transform: scale(0.95);
+        }
+        
+        #settings-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 1vmin;
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid var(--color-secondary);
+            border-radius: 0.5rem;
+            padding: 1vmin;
+            min-width: 30vmin;
+            display: none;
+            flex-direction: column;
+            gap: 0.5vmin;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            z-index: 101;
+        }
+        
+        #settings-dropdown.active {
+            display: flex;
+        }
+        
+        .settings-option {
+            padding: 1.5vmin 2vmin;
+            background: rgba(30, 58, 138, 0.4);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: clamp(0.7rem, 2.5vmin, 1rem);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .settings-option:hover {
+            background: rgba(59, 130, 246, 0.5);
+            border-color: var(--color-secondary);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* ============================================
+           HUD LATERAL DERECHO - CORREGIDO V7
+           ============================================ */
+        #side-hud {
+            width: 35vmin;
+            max-width: 300px;
+            height: 100%; /* MEJORA 1: Altura completa del contenedor padre */
+            max-height: calc(100vh - 2vmin); /* FIX CRÍTICO: Limita la altura al viewport */
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.6) 100%);
+            border: 2px solid var(--color-secondary);
+            border-radius: 0.75rem;
+            padding: 2vmin;
+            display: flex;
+            flex-direction: column;
+            gap: 2vmin;
+            box-shadow: var(--shadow-strong);
+            overflow: hidden; /* MEJORA 2: Prevenir desbordamiento general */
+        }
+        
+        #side-hud h3 {
+            color: var(--color-accent);
+            font-size: clamp(0.8rem, 3vmin, 1.2rem);
+            text-align: center;
+            border-bottom: 2px solid var(--color-secondary);
+            padding-bottom: 1vmin;
+            /* MEJORA VISUAL 1: Gradiente animado en el título */
+            background: linear-gradient(90deg, var(--color-accent), var(--color-secondary), var(--color-accent));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerTitle 3s linear infinite;
+            flex-shrink: 0; /* MEJORA 3: No permitir que el título se comprima */
+        }
+        
+        /* MEJORA VISUAL 2: Animación de brillo en título */
+        @keyframes shimmerTitle {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        /* MEJORA 4: Contenedor scrolleable para estadísticas */
+        #side-hud-stats-container {
+            flex: 1; /* Toma todo el espacio disponible */
+            overflow-y: auto; /* FIX: Scroll solo en las estadísticas */
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 2vmin;
+            padding-right: 0.5vmin; /* Espacio para scrollbar */
+        }
+        
+        /* MEJORA VISUAL 3: Scrollbar personalizado para el contenedor de stats */
+        #side-hud-stats-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #side-hud-stats-container::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+        }
+        
+        #side-hud-stats-container::-webkit-scrollbar-thumb {
+            background: var(--color-secondary);
+            border-radius: 10px;
+            transition: background var(--transition-fast);
+        }
+        
+        #side-hud-stats-container::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary);
+        }
+        
+        .hud-stat {
+            background: rgba(30, 58, 138, 0.4);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.5vmin;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5vmin;
+            /* MEJORA VISUAL 4: Animación de entrada y hover mejorado */
+            animation: fadeInUp 0.4s ease-out;
+            transition: all var(--transition-fast);
+        }
+        
+        .hud-stat:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: var(--color-secondary);
+            transform: translateX(3px);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* MEJORA VISUAL 5: Animación de aparición */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hud-stat-label {
+            font-size: clamp(0.6rem, 2vmin, 0.9rem);
+            color: var(--color-muted);
+            text-transform: uppercase;
+        }
+        
+        .hud-stat-value {
+            font-size: clamp(0.9rem, 3vmin, 1.4rem);
+            color: var(--color-accent);
+            font-weight: 700;
+        }
+        
+        /* K-PAD CON BOTÓN RESET - MEJORADO */
+        #k-pad {
+            background: rgba(30, 58, 138, 0.6);
+            border: 2px solid var(--color-secondary);
+            border-radius: 0.75rem;
+            padding: 1.5vmin;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1vmin;
+            flex-shrink: 0; /* MEJORA 5: Mantener K-PAD siempre visible en la parte inferior */
+            margin-top: auto; /* FIX: Empuja el K-PAD al fondo */
+        }
+        
+        #k-pad-title {
+            font-size: clamp(0.7rem, 2.5vmin, 1rem);
+            color: var(--color-accent);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        #reset-button {
+            width: 12vmin;
+            height: 12vmin;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-error) 0%, #dc2626 100%);
+            border: 3px solid rgba(239, 68, 68, 0.8);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 6vmin;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(239, 68, 68, 0.4);
+            /* MEJORA VISUAL 6: Efecto de pulso constante */
+            animation: pulseShadow 2s ease-in-out infinite;
+        }
+        
+        /* MEJORA VISUAL 7: Animación de pulso en sombra */
+        @keyframes pulseShadow {
+            0%, 100% {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 35px rgba(239, 68, 68, 0.7);
+            }
+        }
+        
+        #reset-button:hover {
+            background: linear-gradient(135deg, #dc2626 0%, var(--color-error) 100%);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 0 30px rgba(239, 68, 68, 0.7);
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        #reset-button:active {
+            transform: scale(0.95) rotate(-15deg);
+        }
+        
+        #game-container {
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #game-grid {
+            display: grid;
+            border: 3px solid var(--color-secondary);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), var(--shadow-strong);
+            height: 85vh;
+            max-width: 95vw;
+            aspect-ratio: 14 / 9;
+            grid-template-columns: repeat(14, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.3) 100%);
+            border-radius: 0.5rem;
+        }
+        
+        .cell {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            position: relative;
+            font-size: clamp(1rem, 4vh, 2rem);
+            transition: all var(--transition-fast);
+        }
+        
+        .wall {
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(30, 58, 138, 0.8) 100%);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .avatar {
+            background: linear-gradient(135deg, #ec4899 0%, var(--color-accent) 50%, #a855f7 100%);
+            border-radius: 15%;
+            box-shadow: 
+                0 0 20px var(--color-accent),
+                0 0 30px rgba(251, 191, 36, 0.6),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+            z-index: 10;
+            animation: pulse 2s infinite, avatarGlow 1.5s infinite alternate;
+            border: 3px solid rgba(251, 191, 36, 0.8);
+            position: relative;
+        }
+        
+        .avatar::before {
+            content: '';
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: centerPulse 1s infinite;
+        }
+        
+        .avatar-trail {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.4), rgba(236, 72, 153, 0.3));
+            border-radius: 15%;
+            animation: trailFade 0.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        @keyframes avatarGlow {
+            0% {
+                box-shadow: 
+                    0 0 20px #ec4899,
+                    0 0 30px #ec4899,
+                    inset 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            100% {
+                box-shadow: 
+                    0 0 30px var(--color-accent),
+                    0 0 40px var(--color-accent),
+                    inset 0 0 30px rgba(255, 255, 255, 0.5);
+            }
+        }
+        
+        @keyframes centerPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0.5;
+            }
+        }
+        
+        .block {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+            color: white;
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 5;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), var(--shadow-strong);
+            border-radius: 0.25rem;
+        }
+        
+        .target {
+            border: 2px dashed var(--color-accent);
+            background: rgba(251, 191, 36, 0.1);
+            animation: targetPulse 2s infinite ease-in-out;
+        }
+        
+        .target-number {
+            color: rgba(251, 191, 36, 0.6);
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+            font-size: 0.8em;
+            font-weight: 700;
+        }
+        
+        .block.on-target {
+            background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
+            border-color: var(--color-success);
+        }
+        
+        .block.on-target.just-placed {
+            animation: celebration 0.6s ease-out;
+        }
+        
+        .block.wrong-target {
+            background-color: #FF0000;
+            color: #FFFFFF;
+            border: 2px solid #CC0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+            animation: shakeError 0.3s ease-in-out;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--color-accent), var(--color-secondary));
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 1s ease-out forwards;
+            z-index: 15;
+        }
+        
+        /* ============================================
+           D-PAD (CONTROLES TÁCTILES)
+           ============================================ */
+        #d-pad {
+            display: none;
+            position: fixed;
+            bottom: 3vmin;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30vmin;
+            height: 30vmin;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            opacity: 0.8;
+            z-index: 100;
+        }
+        
+        .d-pad-btn {
+            border: 2px solid var(--color-secondary);
+            background: rgba(30, 58, 138, 0.6);
+            color: var(--color-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5vmin;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-strong);
+        }
+        
+        .d-pad-btn:active {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+            color: white;
+            transform: scale(0.95);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+        }
+        
+        #d-pad-up { grid-area: 1 / 2 / 2 / 3; }
+        #d-pad-left { grid-area: 2 / 1 / 3 / 2; }
+        #d-pad-right { grid-area: 2 / 3 / 3 / 4; }
+        #d-pad-down { grid-area: 3 / 2 / 4 / 3; }
+        
+        /* ============================================
+           PANTALLA DE VICTORIA
+           ============================================ */
+        #screen-victoria h1 {
+            animation: breathingGlow 2s infinite ease-in-out;
+        }
+        
+        #victory-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 2vmin;
+            font-size: clamp(0.9rem, 3.5vmin, 1.8rem);
+            text-align: center;
+            background: rgba(30, 58, 138, 0.5);
+            padding: 3vmin;
+            border-radius: 1rem;
+            border: 2px solid var(--color-secondary);
+        }
+        
+        #victory-stats span {
+            color: var(--color-accent);
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+        }
+        
+        #victory-score {
+            font-size: clamp(1.5rem, 6vmin, 3rem);
+            color: var(--color-success);
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+        }
+        
+        .victory-bonus {
+            font-size: clamp(0.8rem, 3vmin, 1.5rem);
+            color: var(--color-accent);
+            padding: 1vmin;
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 0.5rem;
+        }
+        
+        /* ============================================
+           PANTALLA DE LOGROS
+           ============================================ */
+        #achievements-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2vmin;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 2vmin;
+        }
+        
+        .achievement-card {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 2vmin;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .achievement-card.unlocked {
+            border-color: var(--color-success);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(30, 58, 138, 0.4) 100%);
+        }
+        
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+        
+        .achievement-icon {
+            font-size: 4rem;
+            margin-bottom: 1vmin;
+        }
+        
+        .achievement-title {
+            font-size: clamp(0.8rem, 2.5vmin, 1.2rem);
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 0.5vmin;
+        }
+        
+        .achievement-desc {
+            font-size: clamp(0.6rem, 1.8vmin, 0.9rem);
+            color: var(--color-muted);
+        }
+        
+        /* ============================================
+           MODAL DE PANTALLA COMPLETA
+           ============================================ */
+        #fullscreen-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 3vmin;
+        }
+        
+        #fullscreen-modal.active {
+            display: flex;
+        }
+        
+        #fullscreen-modal h1 {
+            animation: breathingGlow 2s infinite ease-in-out;
+        }
+        
+        /* ============================================
+           RESPONSIVE (PANTALLAS TÁCTILES)
+           ============================================ */
+        @media (hover: none) and (pointer: coarse) {
+            #d-pad {
+                display: grid;
+            }
+        }
+        
+        /* ============================================
+           RESPONSIVE (ORIENTACIÓN VERTICAL)
+           ============================================ */
+        @media (orientation: portrait) {
+            #screen-juego {
+                flex-direction: column;
+            }
+            
+            #side-hud {
+                width: 100%;
+                max-width: none;
+                max-height: 30vh;
+            }
+            
+            #game-grid {
+                width: 95vw;
+                height: auto;
+                max-height: 85vh;
+                aspect-ratio: 9 / 15;
+                grid-template-columns: repeat(9, 1fr);
+                grid-template-rows: repeat(15, 1fr);
+            }
+            
+            .cell {
+                font-size: clamp(0.8rem, 4vw, 1.5rem);
+            }
+            
+            #levels-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1vmin;
+                padding: 0.5vmin;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="engine">
+        <!-- Pantalla de Carga -->
+        <div id="screen-preload" class="screen active">
+            <h1>CARGANDO...</h1>
+        </div>
+        
+        <!-- Pantalla de Administración de Jugadores -->
+        <div id="screen-admin-players" class="screen">
+            <h1>ADMINISTRACIÓN DE JUGADORES</h1>
+            <div id="players-list"></div>
+            <div class="button" id="add-player-button">AGREGAR JUGADOR</div>
+            <div class="button" id="start-simulation-button" disabled>EMPEZAR SIMULACIÓN</div>
+        </div>
+        
+        <!-- Pantalla de Ingreso de Nombre -->
+        <div id="screen-jugador" class="screen">
+            <h1>NUEVO JUGADOR</h1>
+            <h2>Ingresa tu nombre</h2>
+            <div id="player-name-display"></div>
+            <div id="virtual-keyboard"></div>
+        </div>
+        
+        <!-- Pantalla de Niveles -->
+        <div id="screen-levels" class="screen">
+            <!-- MEJORA V7.1: Engranaje con menú flotante -->
+            <div id="levels-settings-menu">
+                <div id="levels-settings-button" title="Configuración">⚙</div>
+                <div id="levels-settings-dropdown">
+                    <div class="levels-settings-option" id="levels-toggle-sound">
+                        <span><span class="option-icon">🔊</span>Sonido</span>
+                        <span id="levels-sound-status">OFF</span>
+                    </div>
+                    <div class="levels-settings-option" id="levels-exit-game">
+                        <span><span class="option-icon">🚪</span>Salir</span>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 id="levels-welcome-message"></h2>
+            <h1>NIVELES</h1>
+            <div id="levels-grid"></div>
+            <div style="display: flex; gap: 1vmin;">
+                <div class="button button-small" id="achievements-button">LOGROS</div>
+                <div class="button button-small" id="change-player-button">CAMBIAR JUGADOR</div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Logros -->
+        <div id="screen-achievements" class="screen">
+            <h1>🏆 LOGROS</h1>
+            <div id="achievements-container"></div>
+            <div class="button button-small" id="back-from-achievements">VOLVER</div>
+        </div>
+        
+        <!-- Pantalla de Juego -->
+        <div id="screen-juego" class="screen">
+            <div id="game-main-area">
+                <div id="hud">
+                    <div id="settings-menu">
+                        <div id="settings-button" title="Configuración">⚙</div>
+                        <div id="settings-dropdown">
+                            <div class="settings-option" id="toggle-sound">
+                                <span>Sonido</span>
+                                <span id="sound-status">OFF</span>
+                            </div>
+                            <div class="settings-option" id="return-menu">
+                                <span>Volver al Menú</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="hud-level">NIVEL: 1</div>
+                    <div id="hud-moves">MOVIMIENTOS: 0</div>
+                    <div id="hud-pushes">EMPUJES: 0</div>
+                </div>
+                <div id="game-container">
+                    <div id="game-grid"></div>
+                </div>
+            </div>
+            
+            <div id="side-hud">
+                <h3>📊 REPORTES</h3>
+                
+                <!-- MEJORA 6: Contenedor scrolleable para las estadísticas -->
+                <div id="side-hud-stats-container">
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Jugador</div>
+                        <div class="hud-stat-value" id="side-player-name">---</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Nivel Actual</div>
+                        <div class="hud-stat-value" id="side-level">1</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Movimientos</div>
+                        <div class="hud-stat-value" id="side-moves">0</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Empujes</div>
+                        <div class="hud-stat-value" id="side-pushes">0</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Bloques en Posición</div>
+                        <div class="hud-stat-value" id="side-blocks-placed">0 / 8</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Puntuación</div>
+                        <div class="hud-stat-value" id="side-score">0</div>
+                    </div>
+                </div>
+                
+                <div id="k-pad">
+                    <div id="k-pad-title">⌨ K-PAD</div>
+                    <div id="reset-button" title="Resetear Nivel">R</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Victoria -->
+        <div id="screen-victoria" class="screen">
+            <h1>¡VICTORIA!</h1>
+            <div id="victory-stats">
+                <div id="victory-score">PUNTUACIÓN: <span>0</span></div>
+                <div id="victory-moves">MOVIMIENTOS: <span>0</span></div>
+                <div id="victory-pushes">EMPUJES: <span>0</span></div>
+                <div id="victory-time">TIEMPO: <span>0:00</span></div>
+                <div id="victory-bonuses"></div>
+            </div>
+            <div class="button" id="back-to-levels">VOLVER A NIVELES</div>
+        </div>
+    </div>
+    
+    <div id="fullscreen-modal">
+        <h1>⚠ PANTALLA COMPLETA REQUERIDA ⚠</h1>
+        <h2>Debes estar en modo pantalla completa para continuar</h2>
+        <div class="button" id="return-fullscreen-button">VOLVER A PANTALLA COMPLETA</div>
+    </div>
+    
+    <div id="d-pad">
+        <div class="d-pad-btn" id="d-pad-up">▲</div>
+        <div class="d-pad-btn" id="d-pad-left">◄</div>
+        <div class="d-pad-btn" id="d-pad-right">►</div>
+        <div class="d-pad-btn" id="d-pad-down">▼</div>
+    </div>
+    
+    <script>
+    (function() {
+        'use strict';
+        
+        var gameState = {
+            currentScreen: 'preload',
+            currentPlayer: '',
+            currentLevel: 0,
+            avatarPos: { x: 0, y: 0 },
+            moves: 0,
+            pushes: 0,
+            levelData: [],
+            inGame: false,
+            savedGameScreen: null,
+            soundEnabled: false,  // CORREGIDO: Ahora empieza en OFF
+            startTime: 0,
+            errors: 0,
+            perfectPlacement: true,
+            blocksPlaced: {},  // NUEVO: Rastrear bloques ya colocados para evitar animación repetida
+            wrongBlocks: {},  // NUEVO: Rastrear bloques equivocados para evitar animación repetida
+            score: 0
+        };
+        
+        var screens = {
+            preload: document.getElementById('screen-preload'),
+            adminPlayers: document.getElementById('screen-admin-players'),
+            jugador: document.getElementById('screen-jugador'),
+            levels: document.getElementById('screen-levels'),
+            juego: document.getElementById('screen-juego'),
+            victoria: document.getElementById('screen-victoria'),
+            achievements: document.getElementById('screen-achievements')
+        };
+        
+        var fullscreenModal = document.getElementById('fullscreen-modal');
+        var gameGridEl = document.getElementById('game-grid');
+        var hud = {
+            level: document.getElementById('hud-level'),
+            moves: document.getElementById('hud-moves'),
+            pushes: document.getElementById('hud-pushes')
+        };
+        
+        var profiles = {};
+        var playersList = [];
+        var selectedPlayerIndex = -1;
+        var isShiftActive = false;
+        var playerName = '';
+        var isPortrait = window.matchMedia('(orientation: portrait)').matches;
+        var audioContext = null;
+        var fullscreenRequired = false;
+        
+        var CELL_TYPE = {
+            EMPTY: 0,
+            WALL: 1,
+            AVATAR: 2,
+            BLOCK_BASE: 10,
+            TARGET_BASE: 30
+        };
+        
+        // DEFINICIÓN DE LOGROS
+        var achievementsDefs = [
+            { id: 'first_win', icon: '🎯', title: 'Primer Éxito', desc: 'Completa tu primer nivel', unlocked: false },
+            { id: 'perfect_level', icon: '⭐', title: 'Perfecto', desc: 'Completa un nivel sin errores', unlocked: false },
+            { id: 'speed_demon', icon: '⚡', title: 'Rayo', desc: 'Completa un nivel en menos de 30 segundos', unlocked: false },
+            { id: 'five_levels', icon: '🏅', title: '5 Niveles', desc: 'Completa 5 niveles', unlocked: false },
+            { id: 'all_levels', icon: '👑', title: 'Maestro', desc: 'Completa todos los niveles', unlocked: false },
+            { id: 'minimal_moves', icon: '🎓', title: 'Eficiente', desc: 'Completa un nivel con movimientos mínimos', unlocked: false }
+        ];
+        
+        var levelLayouts = [
+            [
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,30,31,32,33,34,35,36,37,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            ]
+        ];
+        
+        var levelLayoutsPortrait = [
+            [
+                [1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,1],
+                [1,0,30,0,0,0,0,0,1],
+                [1,0,31,0,0,0,0,0,1],
+                [1,0,32,0,0,0,0,0,1],
+                [1,0,33,0,0,0,0,0,1],
+                [1,0,34,0,0,0,0,0,1],
+                [1,0,35,0,0,0,0,0,1],
+                [1,0,36,0,0,0,0,0,1],
+                [1,0,37,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1]
+            ]
+        ];
+        
+        // NIVELES CORREGIDOS
+        var levelPuzzles = [
+            {
+                title: 'NIVEL 1',
+                description: 'NÚMEROS',
+                labels: ['0', '1', '2', '3', '4', '5', '6', '7']
+            },
+            {
+                title: 'NIVEL 2',
+                description: 'LETRAS',
+                labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+            },
+            {
+                title: 'NIVEL 3',
+                description: 'VOCALES',
+                labels: ['A', 'E', 'I', 'O', 'U', 'Á', 'É', 'Í']  // CORREGIDO: Sin duplicados
+            },
+            {
+                title: 'NIVEL 4',
+                description: 'COLORES',
+                labels: ['●', '●', '●', '●', '●', '●', '●', '●']  // CORREGIDO: Símbolos universales en lugar de emojis
+            },
+            {
+                title: 'NIVEL 5',
+                description: 'FORMAS',
+                labels: ['⬤', '▲', '■', '◆', '✦', '⬟', '⬡', '◯']
+            },
+            {
+                title: 'NIVEL 6',
+                description: 'ANIMALES',
+                labels: ['🐕', '🐈', '🐁', '🐘', '🦁', '🐯', '🐼', '🐰']
+            },
+            {
+                title: 'NIVEL 7',
+                description: 'FRUTAS',
+                labels: ['🍎', '🍊', '🍌', '🍇', '🍓', '🍉', '🍑', '🍍']
+            },
+            {
+                title: 'NIVEL 8',
+                description: 'SÍMBOLOS',
+                labels: ['@', '#', '$', '%', '&', '*', '+', '=']
+            },
+            {
+                title: 'NIVEL 9',
+                description: 'EMOJIS',
+                labels: ['😀', '😎', '🥳', '😍', '🤖', '👽', '🎭', '🎪']
+            },
+            {
+                title: 'NIVEL 10',
+                description: 'PLANETAS',
+                labels: ['☿', '♀', '⊕', '♂', '♃', '♄', '♅', '♆']
+            },
+            {
+                title: 'NIVEL 11',
+                description: 'MÚSICA',
+                labels: ['♩', '♪', '♫', '♬', '𝄞', '𝄢', '♭', '♯']
+            },
+            {
+                title: 'NIVEL 12',
+                description: 'ESTRELLAS',
+                labels: ['★', '✦', '✧', '✩', '✪', '✫', '✬', '✭']
+            },
+            {
+                title: 'NIVEL 13',
+                description: 'CARTAS',
+                labels: ['♠', '♥', '♦', '♣', 'A', 'K', 'Q', 'J']
+            },
+            {
+                title: 'NIVEL 14',
+                description: 'CLIMA',
+                labels: ['☀', '☁', '⛅', '🌧', '⛈', '🌩', '❄', '🌈']
+            },
+            {
+                title: 'NIVEL 15',
+                description: 'GRIEGO',
+                labels: ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ']
+            },
+            {
+                title: 'NIVEL 16',
+                description: 'MEZCLA',
+                labels: ['Ω', 'Σ', 'π', 'λ', 'μ', 'Φ', 'Ψ', 'Ξ']
+            }
+        ];
+        
+        // Agregar colores específicos a los bloques del nivel de colores
+        var colorMapping = ['#FF0000', '#FFA500', '#FFFF00', '#00FF00', '#0000FF', '#800080', '#8B4513', '#000000'];
+        
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.log('Audio no disponible');
+            }
+        }
+        
+        function playSound(type) {
+            if (!audioContext || !gameState.soundEnabled) return;
+            
+            var oscillator = audioContext.createOscillator();
+            var gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            
+            if (type === 'click') {
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+            } else if (type === 'move') {
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+            } else if (type === 'error') {
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+                gameGridEl.classList.add('shake');
+                setTimeout(function() {
+                    gameGridEl.classList.remove('shake');
+                }, 300);
+            } else if (type === 'victory') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+            }
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+        
+        function createParticles(x, y) {
+            for (var i = 0; i < 8; i++) {
+                var particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                var angle = (Math.PI * 2 * i) / 8;
+                var distance = 50 + Math.random() * 50;
+                var tx = Math.cos(angle) * distance;
+                var ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(function(p) {
+                    return function() {
+                        if (p.parentNode) p.parentNode.removeChild(p);
+                    };
+                }(particle), 1000);
+            }
+        }
+        
+        function createAvatarTrail(avatarElement) {
+            var trail = document.createElement('div');
+            trail.className = 'avatar-trail';
+            avatarElement.appendChild(trail);
+            
+            setTimeout(function() {
+                if (trail.parentNode) trail.parentNode.removeChild(trail);
+            }, 500);
+        }
+        
+        function generateRandomEntities(isPortraitMode) {
+            var gridWidth = isPortraitMode ? 9 : 14;
+            var gridHeight = isPortraitMode ? 15 : 9;
+            var minDistance = 2;
+            
+            var usedPositions = [];
+            
+            function isPositionValid(x, y) {
+                if (x < minDistance || x >= gridWidth - minDistance || 
+                    y < minDistance || y >= gridHeight - minDistance) {
+                    return false;
+                }
+                
+                for (var i = 0; i < usedPositions.length; i++) {
+                    if (usedPositions[i].x === x && usedPositions[i].y === y) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            function getRandomPosition() {
+                var attempts = 0;
+                var maxAttempts = 100;
+                
+                while (attempts < maxAttempts) {
+                    var x = minDistance + Math.floor(Math.random() * (gridWidth - 2 * minDistance));
+                    var y = minDistance + Math.floor(Math.random() * (gridHeight - 2 * minDistance));
+                    
+                    if (isPositionValid(x, y)) {
+                        usedPositions.push({ x: x, y: y });
+                        return { x: x, y: y };
+                    }
+                    
+                    attempts++;
+                }
+                
+                return { x: Math.floor(gridWidth / 2), y: Math.floor(gridHeight / 2) };
+            }
+            
+            var avatar = getRandomPosition();
+            
+            var blocks = [];
+            for (var i = 0; i < 8; i++) {
+                var pos = getRandomPosition();
+                blocks.push({ x: pos.x, y: pos.y, id: 10 + i });
+            }
+            
+            return {
+                avatar: avatar,
+                blocks: blocks
+            };
+        }
+        
+        function populateLevelsScreen() {
+            var grid = document.getElementById('levels-grid');
+            grid.innerHTML = '';
+            
+            var progress = getCurrentPlayerProgress();
+            
+            for (var i = 0; i < levelPuzzles.length; i++) {
+                var puzzle = levelPuzzles[i];
+                var levelBtn = document.createElement('div');
+                levelBtn.className = 'level-button';
+                levelBtn.setAttribute('data-level-index', i);
+                
+                if (progress[i].completed) {
+                    levelBtn.classList.add('completed');
+                }
+                
+                var title = document.createElement('div');
+                title.className = 'level-title';
+                title.textContent = puzzle.title;
+                
+                var desc = document.createElement('div');
+                desc.className = 'level-desc';
+                desc.textContent = puzzle.description;
+                
+                var progressText = document.createElement('div');
+                progressText.className = 'level-progress';
+                progressText.textContent = progress[i].completed ? '✓ ' + progress[i].moves + ' MOV' : '';
+                
+                levelBtn.appendChild(title);
+                levelBtn.appendChild(desc);
+                levelBtn.appendChild(progressText);
+                
+                grid.appendChild(levelBtn);
+            }
+        }
+        
+        function savePlayersList() {
+            try {
+                localStorage.setItem('sokoban_players', JSON.stringify(playersList));
+            } catch (e) {
+                console.log('Error guardando jugadores:', e);
+            }
+        }
+        
+        function loadPlayersList() {
+            try {
+                var data = localStorage.getItem('sokoban_players');
+                if (data) {
+                    playersList = JSON.parse(data);
+                    if (!Array.isArray(playersList)) {
+                        playersList = [];
+                    }
+                } else {
+                    playersList = [];
+                }
+            } catch (e) {
+                console.log('Error cargando jugadores:', e);
+                playersList = [];
+            }
+            
+            if (playersList.length === 0) {
+                playersList.push('JUGADOR1');
+                savePlayersList();
+            }
+        }
+        
+        function saveProfiles() {
+            try {
+                localStorage.setItem('sokoban_profiles', JSON.stringify(profiles));
+            } catch (e) {
+                console.log('Error guardando perfiles:', e);
+            }
+        }
+        
+        function loadProfiles() {
+            try {
+                var data = localStorage.getItem('sokoban_profiles');
+                if (data) {
+                    profiles = JSON.parse(data);
+                } else {
+                    profiles = {};
+                }
+            } catch (e) {
+                console.log('Error cargando perfiles:', e);
+                profiles = {};
+            }
+        }
+        
+        function getCurrentPlayerProgress() {
+            if (!profiles[gameState.currentPlayer]) {
+                var initialProgress = [];
+                for (var i = 0; i < levelPuzzles.length; i++) {
+                    initialProgress.push({ completed: false, moves: null, score: 0 });
+                }
+                profiles[gameState.currentPlayer] = { 
+                    progress: initialProgress,
+                    achievements: JSON.parse(JSON.stringify(achievementsDefs))
+                };
+            }
+            
+            var currentProgress = profiles[gameState.currentPlayer].progress;
+            if (currentProgress.length < levelPuzzles.length) {
+                var diff = levelPuzzles.length - currentProgress.length;
+                for (var j = 0; j < diff; j++) {
+                    currentProgress.push({ completed: false, moves: null, score: 0 });
+                }
+            }
+            
+            if (!profiles[gameState.currentPlayer].achievements) {
+                profiles[gameState.currentPlayer].achievements = JSON.parse(JSON.stringify(achievementsDefs));
+            }
+            
+            return profiles[gameState.currentPlayer].progress;
+        }
+        
+        function updateStartButton() {
+            var startButton = document.getElementById('start-simulation-button');
+            if (selectedPlayerIndex >= 0 && selectedPlayerIndex < playersList.length) {
+                startButton.disabled = false;
+                startButton.style.opacity = '1';
+            } else {
+                startButton.disabled = true;
+                startButton.style.opacity = '0.4';
+            }
+        }
+        
+        function renderPlayersList() {
+            var playersListEl = document.getElementById('players-list');
+            playersListEl.innerHTML = '';
+            
+            if (playersList.length === 0) {
+                playersListEl.innerHTML = '<div style="text-align: center; padding: 2vmin;">No hay jugadores registrados</div>';
+                updateStartButton();
+                return;
+            }
+            
+            for (var i = 0; i < playersList.length; i++) {
+                var playerItem = document.createElement('div');
+                playerItem.className = 'player-item';
+                if (i === selectedPlayerIndex) {
+                    playerItem.classList.add('selected');
+                }
+                playerItem.setAttribute('data-index', i);
+                
+                var playerNameEl = document.createElement('span');
+                playerNameEl.textContent = playersList[i];
+                
+                var deleteBtn = document.createElement('button');
+                deleteBtn.className = 'player-delete-btn';
+                deleteBtn.textContent = 'ELIMINAR';
+                deleteBtn.setAttribute('data-index', i);
+                
+                playerItem.appendChild(playerNameEl);
+                playerItem.appendChild(deleteBtn);
+                
+                playersListEl.appendChild(playerItem);
+            }
+            
+            updateStartButton();
+        }
+        
+        function createVirtualKeyboard() {
+            var keys = [
+                'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'BACKSPACE',
+                'A', 'S', 'D', 'F', 'G', 'H', 'ENTER',
+                'I', 'J', 'K', 'L', 'M', 'Ñ',
+                'O', 'P',
+                'SHIFT', 'Z', 'X', 'C', 'V', 'B', 'N'
+            ];
+            
+            var keyLabels = {
+                'BACKSPACE': '⌫',
+                'ENTER': 'ENTER',
+                'SHIFT': 'SHIFT'
+            };
+            
+            var keyboard = document.getElementById('virtual-keyboard');
+            keyboard.innerHTML = '';
+            
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var keyEl = document.createElement('div');
+                keyEl.className = 'key key-' + key.toLowerCase();
+                keyEl.textContent = keyLabels[key] || key;
+                keyboard.appendChild(keyEl);
+            }
+            
+            renderKeyboard();
+        }
+        
+        function renderKeyboard() {
+            var keyElements = document.querySelectorAll('#virtual-keyboard .key');
+            
+            for (var i = 0; i < keyElements.length; i++) {
+                var keyEl = keyElements[i];
+                var text = keyEl.textContent.toLowerCase();
+                
+                if (text !== '⌫' && text !== 'enter' && text !== 'shift') {
+                    keyEl.textContent = isShiftActive ? text.toUpperCase() : text.toLowerCase();
+                }
+            }
+            
+            var shiftKey = document.querySelector('.key-shift');
+            if (shiftKey) {
+                if (isShiftActive) {
+                    shiftKey.classList.add('active');
+                } else {
+                    shiftKey.classList.remove('active');
+                }
+            }
+        }
+        
+        function updatePlayerNameDisplay() {
+            document.getElementById('player-name-display').textContent = playerName || '...';
+        }
+        
+        function updateSideHud() {
+            document.getElementById('side-player-name').textContent = gameState.currentPlayer || '---';
+            document.getElementById('side-level').textContent = (gameState.currentLevel + 1);
+            document.getElementById('side-moves').textContent = gameState.moves;
+            document.getElementById('side-pushes').textContent = gameState.pushes;
+            document.getElementById('side-score').textContent = gameState.score;
+            
+            var baseLayout = isPortrait ? levelLayoutsPortrait[0] : levelLayouts[0];
+            var correctBlocks = 0;
+            var totalBlocks = 8;
+            
+            for (var row = 0; row < baseLayout.length; row++) {
+                for (var col = 0; col < baseLayout[row].length; col++) {
+                    var baseValue = baseLayout[row][col];
+                    if (baseValue >= CELL_TYPE.TARGET_BASE) {
+                        var expectedBlock = baseValue - 20;
+                        if (gameState.levelData[row][col] === expectedBlock) {
+                            correctBlocks++;
+                        }
+                    }
+                }
+            }
+            
+            document.getElementById('side-blocks-placed').textContent = correctBlocks + ' / ' + totalBlocks;
+        }
+        
+        function calculateScore() {
+            var baseScore = 1000;
+            var timeElapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            
+            // Bonus por tiempo
+            var timeBonus = Math.max(0, 500 - (timeElapsed * 10));
+            
+            // Penalización por movimientos
+            var movesPenalty = gameState.moves * 5;
+            
+            // Penalización por errores
+            var errorPenalty = gameState.errors * 100;
+            
+            // Bonus por colocación perfecta
+            var perfectBonus = gameState.perfectPlacement ? 500 : 0;
+            
+            var totalScore = Math.max(0, baseScore + timeBonus - movesPenalty - errorPenalty + perfectBonus);
+            
+            return {
+                total: Math.floor(totalScore),
+                timeBonus: Math.floor(timeBonus),
+                perfectBonus: perfectBonus,
+                timeElapsed: timeElapsed
+            };
+        }
+        
+        function checkAchievements(scoreData) {
+            var playerAchievements = profiles[gameState.currentPlayer].achievements;
+            var newUnlocks = [];
+            
+            // Primer nivel completado
+            if (!playerAchievements[0].unlocked) {
+                playerAchievements[0].unlocked = true;
+                newUnlocks.push(playerAchievements[0]);
+            }
+            
+            // Nivel perfecto
+            if (gameState.perfectPlacement && !playerAchievements[1].unlocked) {
+                playerAchievements[1].unlocked = true;
+                newUnlocks.push(playerAchievements[1]);
+            }
+            
+            // Velocidad
+            if (scoreData.timeElapsed < 30 && !playerAchievements[2].unlocked) {
+                playerAchievements[2].unlocked = true;
+                newUnlocks.push(playerAchievements[2]);
+            }
+            
+            // 5 niveles
+            var completedCount = 0;
+            var progress = getCurrentPlayerProgress();
+            for (var i = 0; i < progress.length; i++) {
+                if (progress[i].completed) completedCount++;
+            }
+            
+            if (completedCount >= 5 && !playerAchievements[3].unlocked) {
+                playerAchievements[3].unlocked = true;
+                newUnlocks.push(playerAchievements[3]);
+            }
+            
+            // Todos los niveles
+            if (completedCount >= levelPuzzles.length && !playerAchievements[4].unlocked) {
+                playerAchievements[4].unlocked = true;
+                newUnlocks.push(playerAchievements[4]);
+            }
+            
+            // Movimientos mínimos
+            if (gameState.moves <= 15 && !playerAchievements[5].unlocked) {
+                playerAchievements[5].unlocked = true;
+                newUnlocks.push(playerAchievements[5]);
+            }
+            
+            saveProfiles();
+            
+            return newUnlocks;
+        }
+        
+        function loadLevel(levelIndex) {
+            var layout = isPortrait ? levelLayoutsPortrait[0] : levelLayouts[0];
+            var puzzle = levelPuzzles[levelIndex];
+            
+            var entities = generateRandomEntities(isPortrait);
+            
+            gameState.levelData = [];
+            for (var i = 0; i < layout.length; i++) {
+                gameState.levelData[i] = layout[i].slice();
+            }
+            
+            gameState.avatarPos = {
+                x: entities.avatar.x,
+                y: entities.avatar.y
+            };
+            gameState.levelData[entities.avatar.y][entities.avatar.x] = CELL_TYPE.AVATAR;
+            
+            for (var j = 0; j < entities.blocks.length; j++) {
+                var block = entities.blocks[j];
+                gameState.levelData[block.y][block.x] = block.id;
+            }
+            
+            gameState.moves = 0;
+            gameState.pushes = 0;
+            gameState.errors = 0;
+            gameState.perfectPlacement = true;
+            gameState.blocksPlaced = {};  // NUEVO: Resetear bloques colocados
+            gameState.wrongBlocks = {};  // NUEVO: Resetear bloques equivocados
+            gameState.startTime = Date.now();
+            gameState.score = 0;
+            
+            render();
+            updateSideHud();
+        }
+        
+        function render() {
+            gameGridEl.innerHTML = '';
+            
+            var baseLayout = isPortrait ? levelLayoutsPortrait[0] : levelLayouts[0];
+            var labels = levelPuzzles[gameState.currentLevel].labels;
+            
+            for (var row = 0; row < gameState.levelData.length; row++) {
+                for (var col = 0; col < gameState.levelData[row].length; col++) {
+                    var cellValue = gameState.levelData[row][col];
+                    var baseValue = baseLayout[row][col];
+                    
+                    var cellEl = document.createElement('div');
+                    cellEl.className = 'cell';
+                    
+                    if (cellValue === CELL_TYPE.WALL) {
+                        cellEl.classList.add('wall');
+                    }
+                    
+                    if (baseValue >= CELL_TYPE.TARGET_BASE) {
+                        cellEl.classList.add('target');
+                        
+                        if (cellValue >= CELL_TYPE.TARGET_BASE) {
+                            var targetIndex = baseValue - CELL_TYPE.TARGET_BASE;
+                            if (labels[targetIndex]) {
+                                var targetLabel = document.createElement('span');
+                                targetLabel.className = 'target-number';
+                                targetLabel.textContent = labels[targetIndex];
+                                cellEl.appendChild(targetLabel);
+                            }
+                        }
+                    }
+                    
+                    if (cellValue === CELL_TYPE.AVATAR) {
+                        cellEl.classList.add('avatar');
+                    }
+                    
+                    if (cellValue >= CELL_TYPE.BLOCK_BASE && cellValue < CELL_TYPE.TARGET_BASE) {
+                        var blockIndex = cellValue - CELL_TYPE.BLOCK_BASE;
+                        cellEl.classList.add('block');
+                        cellEl.setAttribute('data-block-id', cellValue);
+                        
+                        if (labels[blockIndex]) {
+                            cellEl.textContent = labels[blockIndex];
+                        }
+                        
+                        // Aplicar colores al nivel 4 (COLORES)
+                        if (gameState.currentLevel === 3 && colorMapping[blockIndex]) {
+                            cellEl.style.background = colorMapping[blockIndex];
+                            cellEl.style.color = blockIndex === 7 ? 'white' : 'white';
+                        }
+                        
+                        if (baseValue - 20 === cellValue) {
+                            cellEl.classList.add('on-target');
+                        } else if (baseValue >= CELL_TYPE.TARGET_BASE) {
+                            // CORREGIDO: Solo añadir clase wrong-target, sin animación aquí
+                            var wrongKey = cellValue + '_' + row + '_' + col;
+                            if (gameState.wrongBlocks[wrongKey]) {
+                                cellEl.classList.add('wrong-target');
+                            }
+                        }
+                    }
+                    
+                    gameGridEl.appendChild(cellEl);
+                }
+            }
+            
+            hud.level.textContent = 'NIVEL: ' + (gameState.currentLevel + 1);
+            hud.moves.textContent = 'MOVIMIENTOS: ' + gameState.moves;
+            hud.pushes.textContent = 'EMPUJES: ' + gameState.pushes;
+        }
+        
+        function handleInput(dx, dy) {
+            if (!gameState.inGame) return;
+            
+            var currentX = gameState.avatarPos.x;
+            var currentY = gameState.avatarPos.y;
+            var newX = currentX + dx;
+            var newY = currentY + dy;
+            
+            if (!gameState.levelData[newY] || gameState.levelData[newY][newX] === undefined) {
+                playSound('error');
+                return;
+            }
+            
+            if (gameState.levelData[newY][newX] === CELL_TYPE.WALL) {
+                playSound('error');
+                return;
+            }
+            
+            var isBlock = gameState.levelData[newY][newX] >= CELL_TYPE.BLOCK_BASE &&
+                          gameState.levelData[newY][newX] < CELL_TYPE.TARGET_BASE;
+            
+            if (isBlock) {
+                var blockNewX = newX + dx;
+                var blockNewY = newY + dy;
+                
+                if (!gameState.levelData[blockNewY] || gameState.levelData[blockNewY][blockNewX] === undefined) {
+                    playSound('error');
+                    return;
+                }
+                
+                var blockDestination = gameState.levelData[blockNewY][blockNewX];
+                
+                if (blockDestination === CELL_TYPE.WALL ||
+                    (blockDestination >= CELL_TYPE.BLOCK_BASE && blockDestination < CELL_TYPE.TARGET_BASE)) {
+                    playSound('error');
+                    return;
+                }
+                
+                var movedBlockId = gameState.levelData[newY][newX];
+                var baseLayout = isPortrait ? levelLayoutsPortrait[0] : levelLayouts[0];
+                var targetAtNewPos = baseLayout[blockNewY][blockNewX];
+                
+                // CORREGIDO: Solo crear partículas y animación si es la primera vez que se coloca correctamente
+                var blockKey = movedBlockId + '_' + blockNewY + '_' + blockNewX;
+                var isCorrectPlacement = targetAtNewPos >= CELL_TYPE.TARGET_BASE && targetAtNewPos - 20 === movedBlockId;
+                var isFirstTimeCorrect = !gameState.blocksPlaced[blockKey];
+                
+                if (isCorrectPlacement && isFirstTimeCorrect) {
+                    var cellRect = gameGridEl.getBoundingClientRect();
+                    var cellWidth = cellRect.width / (isPortrait ? 9 : 14);
+                    var cellHeight = cellRect.height / (isPortrait ? 15 : 9);
+                    var particleX = cellRect.left + (blockNewX * cellWidth) + (cellWidth / 2);
+                    var particleY = cellRect.top + (blockNewY * cellHeight) + (cellHeight / 2);
+                    createParticles(particleX, particleY);
+                    gameState.blocksPlaced[blockKey] = true;
+                    gameState.score += 100;
+                } else if (!isCorrectPlacement && targetAtNewPos >= CELL_TYPE.TARGET_BASE) {
+                    // CORREGIDO: Marcar como error solo la primera vez
+                    var wrongKey = movedBlockId + '_' + blockNewY + '_' + blockNewX;
+                    if (!gameState.wrongBlocks[wrongKey]) {
+                        gameState.wrongBlocks[wrongKey] = true;
+                        gameState.errors++;
+                        gameState.perfectPlacement = false;
+                    }
+                }
+                
+                gameState.levelData[blockNewY][blockNewX] = movedBlockId;
+                gameState.pushes++;
+            }
+            
+            gameState.levelData[newY][newX] = CELL_TYPE.AVATAR;
+            
+            var baseLayout = isPortrait ? levelLayoutsPortrait[0] : levelLayouts[0];
+            gameState.levelData[currentY][currentX] = baseLayout[currentY][currentX];
+            
+            gameState.avatarPos = { x: newX, y: newY };
+            gameState.moves++;
+            
+            playSound('move');
+            render();
+            
+            // CORREGIDO: Añadir animación solo cuando se coloca por primera vez
+            if (isBlock) {
+                var blockCells = document.querySelectorAll('.block[data-block-id="' + movedBlockId + '"]');
+                if (blockCells.length > 0) {
+                    if (isCorrectPlacement && isFirstTimeCorrect) {
+                        // Animación de celebración para bloque correcto
+                        blockCells[0].classList.add('just-placed');
+                        setTimeout(function(id) {
+                            return function() {
+                                var cell = document.querySelector('.block[data-block-id="' + id + '"]');
+                                if (cell) {
+                                    cell.classList.remove('just-placed');
+                                }
+                            };
+                        }(movedBlockId), 600);
+                    } else if (!isCorrectPlacement && targetAtNewPos >= CELL_TYPE.TARGET_BASE) {
+                        // Añadir clase wrong-target y animar SOLO si es primera vez en esta posición equivocada
+                        var wrongKey = movedBlockId + '_' + blockNewY + '_' + blockNewX;
+                        var wrongKeyPrev = movedBlockId + '_' + newY + '_' + newX;
+                        
+                        // Limpiar marcador previo si el bloque venía de otra celda equivocada
+                        delete gameState.wrongBlocks[wrongKeyPrev];
+                        
+                        if (gameState.wrongBlocks[wrongKey] && !blockCells[0].classList.contains('wrong-target')) {
+                            // Es la primera vez en esta posición, añadir clase y animar
+                            blockCells[0].classList.add('wrong-target');
+                        }
+                    }
+                }
+            }
+            
+            var avatarCells = document.querySelectorAll('.avatar');
+            if (avatarCells.length > 0) {
+                createAvatarTrail(avatarCells[0]);
+            }
+            
+            updateSideHud();
+            checkWinCondition();
+        }
+        
+        function checkWinCondition() {
+            var baseLayout = isPortrait ? levelLayoutsPortrait[0] : levelLayouts[0];
+            
+            for (var row = 0; row < baseLayout.length; row++) {
+                for (var col = 0; col < baseLayout[row].length; col++) {
+                    var baseValue = baseLayout[row][col];
+                    if (baseValue >= CELL_TYPE.TARGET_BASE) {
+                        var expectedBlock = baseValue - 20;
+                        if (gameState.levelData[row][col] !== expectedBlock) {
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            gameState.inGame = false;
+            playSound('victory');
+            
+            var scoreData = calculateScore();
+            gameState.score = scoreData.total;
+            
+            var progress = getCurrentPlayerProgress();
+            progress[gameState.currentLevel].completed = true;
+            progress[gameState.currentLevel].moves = gameState.moves;
+            progress[gameState.currentLevel].score = scoreData.total;
+            saveProfiles();
+            
+            var newAchievements = checkAchievements(scoreData);
+            
+            var timeMinutes = Math.floor(scoreData.timeElapsed / 60);
+            var timeSeconds = scoreData.timeElapsed % 60;
+            var timeString = timeMinutes + ':' + (timeSeconds < 10 ? '0' : '') + timeSeconds;
+            
+            document.querySelector('#victory-score span').textContent = scoreData.total;
+            document.querySelector('#victory-moves span').textContent = gameState.moves;
+            document.querySelector('#victory-pushes span').textContent = gameState.pushes;
+            document.querySelector('#victory-time span').textContent = timeString;
+            
+            var bonusesEl = document.getElementById('victory-bonuses');
+            bonusesEl.innerHTML = '';
+            
+            if (scoreData.timeBonus > 0) {
+                var timeBonusDiv = document.createElement('div');
+                timeBonusDiv.className = 'victory-bonus';
+                timeBonusDiv.textContent = '⚡ Bonus Velocidad: +' + scoreData.timeBonus;
+                bonusesEl.appendChild(timeBonusDiv);
+            }
+            
+            if (scoreData.perfectBonus > 0) {
+                var perfectBonusDiv = document.createElement('div');
+                perfectBonusDiv.className = 'victory-bonus';
+                perfectBonusDiv.textContent = '⭐ Colocación Perfecta: +' + scoreData.perfectBonus;
+                bonusesEl.appendChild(perfectBonusDiv);
+            }
+            
+            if (newAchievements.length > 0) {
+                var achievDiv = document.createElement('div');
+                achievDiv.className = 'victory-bonus';
+                achievDiv.textContent = '🏆 Nuevos logros: ' + newAchievements.length;
+                bonusesEl.appendChild(achievDiv);
+            }
+            
+            showScreen('victoria');
+        }
+        
+        function renderAchievements() {
+            var container = document.getElementById('achievements-container');
+            container.innerHTML = '';
+            
+            var playerAchievements = profiles[gameState.currentPlayer].achievements;
+            
+            for (var i = 0; i < playerAchievements.length; i++) {
+                var ach = playerAchievements[i];
+                var card = document.createElement('div');
+                card.className = 'achievement-card ' + (ach.unlocked ? 'unlocked' : 'locked');
+                
+                var icon = document.createElement('div');
+                icon.className = 'achievement-icon';
+                icon.textContent = ach.icon;
+                
+                var title = document.createElement('div');
+                title.className = 'achievement-title';
+                title.textContent = ach.title;
+                
+                var desc = document.createElement('div');
+                desc.className = 'achievement-desc';
+                desc.textContent = ach.desc;
+                
+                card.appendChild(icon);
+                card.appendChild(title);
+                card.appendChild(desc);
+                
+                container.appendChild(card);
+            }
+        }
+        
+        function showScreen(screenId) {
+            for (var key in screens) {
+                if (screens.hasOwnProperty(key)) {
+                    screens[key].classList.remove('active');
+                }
+            }
+            
+            if (screens[screenId]) {
+                screens[screenId].classList.add('active');
+                gameState.currentScreen = screenId;
+            }
+        }
+        
+        function enterFullscreen() {
+            var element = document.documentElement;
+            
+            if (element.requestFullscreen) {
+                element.requestFullscreen().catch(function(err) {
+                    console.log('Error en fullscreen:', err);
+                });
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+        
+        function isFullscreen() {
+            return !!(document.fullscreenElement || 
+                     document.webkitFullscreenElement || 
+                     document.mozFullScreenElement || 
+                     document.msFullscreenElement);
+        }
+        
+        function checkFullscreenStatus() {
+            if (fullscreenRequired && !isFullscreen()) {
+                gameState.savedGameScreen = gameState.currentScreen;
+                fullscreenModal.classList.add('active');
+            } else {
+                fullscreenModal.classList.remove('active');
+            }
+        }
+        
+        /* ============================================
+           EVENT LISTENERS
+           ============================================ */
+        
+        document.getElementById('start-simulation-button').addEventListener('click', function() {
+            playSound('click');
+            
+            if (selectedPlayerIndex < 0 || selectedPlayerIndex >= playersList.length) {
+                alert('Por favor selecciona un jugador');
+                return;
+            }
+            
+            gameState.currentPlayer = playersList[selectedPlayerIndex];
+            document.getElementById('levels-welcome-message').textContent = 'BIENVENIDO ' + gameState.currentPlayer;
+            
+            fullscreenRequired = true;
+            enterFullscreen();
+            
+            setTimeout(function() {
+                showScreen('levels');
+                populateLevelsScreen();
+            }, 500);
+        });
+        
+        document.getElementById('add-player-button').addEventListener('click', function() {
+            playSound('click');
+            playerName = '';
+            updatePlayerNameDisplay();
+            showScreen('jugador');
+        });
+        
+        document.getElementById('players-list').addEventListener('click', function(e) {
+            var playerItem = e.target.closest('.player-item');
+            if (playerItem && !e.target.classList.contains('player-delete-btn')) {
+                playSound('click');
+                selectedPlayerIndex = parseInt(playerItem.getAttribute('data-index'));
+                renderPlayersList();
+            }
+            
+            if (e.target.classList.contains('player-delete-btn')) {
+                playSound('error');
+                var index = parseInt(e.target.getAttribute('data-index'));
+                
+                if (confirm('¿Eliminar jugador "' + playersList[index] + '"?')) {
+                    playersList.splice(index, 1);
+                    
+                    if (playersList.length === 0) {
+                        playersList.push('JUGADOR1');
+                    }
+                    
+                    if (selectedPlayerIndex >= playersList.length) {
+                        selectedPlayerIndex = playersList.length - 1;
+                    }
+                    
+                    savePlayersList();
+                    renderPlayersList();
+                }
+            }
+        });
+        
+        document.getElementById('virtual-keyboard').addEventListener('click', function(e) {
+            if (!e.target.classList.contains('key')) return;
+            
+            playSound('click');
+            
+            var key = e.target.className.match(/key-(\S+)/)[1];
+            
+            if (key === 'shift') {
+                isShiftActive = !isShiftActive;
+                renderKeyboard();
+            } else if (key === 'backspace') {
+                playerName = playerName.slice(0, -1);
+                updatePlayerNameDisplay();
+            } else if (key === 'enter') {
+                if (playerName.length === 0) {
+                    var display = document.getElementById('player-name-display');
+                    display.classList.add('shake');
+                    setTimeout(function() {
+                        display.classList.remove('shake');
+                    }, 300);
+                    return;
+                }
+                
+                if (playersList.indexOf(playerName) === -1) {
+                    playersList.push(playerName);
+                    savePlayersList();
+                }
+                
+                selectedPlayerIndex = playersList.indexOf(playerName);
+                renderPlayersList();
+                showScreen('adminPlayers');
+            } else {
+                if (playerName.length < 15) {
+                    var letter = e.target.textContent;
+                    playerName += letter;
+                    updatePlayerNameDisplay();
+                }
+            }
+        });
+        
+        document.getElementById('change-player-button').addEventListener('click', function() {
+            playSound('click');
+            selectedPlayerIndex = -1;
+            showScreen('adminPlayers');
+            renderPlayersList();
+        });
+        
+        document.getElementById('achievements-button').addEventListener('click', function() {
+            playSound('click');
+            renderAchievements();
+            showScreen('achievements');
+        });
+        
+        document.getElementById('back-from-achievements').addEventListener('click', function() {
+            playSound('click');
+            showScreen('levels');
+        });
+        
+        document.getElementById('back-to-levels').addEventListener('click', function() {
+            playSound('click');
+            showScreen('levels');
+            populateLevelsScreen();
+        });
+        
+        document.getElementById('settings-button').addEventListener('click', function(e) {
+            e.stopPropagation();
+            playSound('click');
+            var dropdown = document.getElementById('settings-dropdown');
+            dropdown.classList.toggle('active');
+        });
+        
+        document.addEventListener('click', function(e) {
+            var dropdown = document.getElementById('settings-dropdown');
+            var settingsMenu = document.getElementById('settings-menu');
+            
+            if (!settingsMenu.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+        
+        document.getElementById('toggle-sound').addEventListener('click', function() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            document.getElementById('sound-status').textContent = gameState.soundEnabled ? 'ON' : 'OFF';
+            playSound('click');
+        });
+        
+        document.getElementById('return-menu').addEventListener('click', function() {
+            playSound('click');
+            gameState.inGame = false;
+            showScreen('levels');
+            populateLevelsScreen();
+            document.getElementById('settings-dropdown').classList.remove('active');
+        });
+        
+        document.getElementById('reset-button').addEventListener('click', function() {
+            playSound('click');
+            if (gameState.inGame) {
+                loadLevel(gameState.currentLevel);
+            }
+        });
+        
+        // MEJORA V7.1: Menú de configuración para pantalla de niveles
+        document.getElementById('levels-settings-button').addEventListener('click', function(e) {
+            e.stopPropagation();
+            playSound('click');
+            var dropdown = document.getElementById('levels-settings-dropdown');
+            dropdown.classList.toggle('active');
+        });
+        
+        document.addEventListener('click', function(e) {
+            var dropdown = document.getElementById('levels-settings-dropdown');
+            var settingsMenu = document.getElementById('levels-settings-menu');
+            
+            if (settingsMenu && !settingsMenu.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+        
+        document.getElementById('levels-toggle-sound').addEventListener('click', function() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            document.getElementById('levels-sound-status').textContent = gameState.soundEnabled ? 'ON' : 'OFF';
+            // También actualizar el otro indicador de sonido si existe
+            var soundStatus = document.getElementById('sound-status');
+            if (soundStatus) {
+                soundStatus.textContent = gameState.soundEnabled ? 'ON' : 'OFF';
+            }
+            playSound('click');
+        });
+        
+        document.getElementById('levels-exit-game').addEventListener('click', function() {
+            playSound('click');
+            // Intentar cerrar la ventana/pestaña
+            if (confirm('¿Deseas salir del juego? Esta acción cerrará la ventana.')) {
+                // Intentar cerrar la ventana
+                window.close();
+                // Si no se puede cerrar, mostrar mensaje
+                setTimeout(function() {
+                    alert('No se puede cerrar la ventana automáticamente. Por favor, cierra manualmente la pestaña.');
+                }, 100);
+            }
+        });
+        
+        document.getElementById('levels-grid').addEventListener('click', function(e) {
+            var levelButton = e.target.closest('.level-button');
+            if (!levelButton) return;
+            
+            playSound('click');
+            
+            var levelIndex = parseInt(levelButton.getAttribute('data-level-index'));
+            gameState.currentLevel = levelIndex;
+            
+            loadLevel(levelIndex);
+            showScreen('juego');
+            gameState.inGame = true;
+            updateSideHud();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (!gameState.inGame) return;
+            
+            var key = e.key.toLowerCase();
+            
+            if (key === 'arrowup' || key === 'w') {
+                e.preventDefault();
+                handleInput(0, -1);
+            } else if (key === 'arrowdown' || key === 's') {
+                e.preventDefault();
+                handleInput(0, 1);
+            } else if (key === 'arrowleft' || key === 'a') {
+                e.preventDefault();
+                handleInput(-1, 0);
+            } else if (key === 'arrowright' || key === 'd') {
+                e.preventDefault();
+                handleInput(1, 0);
+            } else if (key === 'r') {
+                e.preventDefault();
+                loadLevel(gameState.currentLevel);
+            }
+        });
+        
+        document.getElementById('d-pad-up').addEventListener('click', function() {
+            handleInput(0, -1);
+        });
+        
+        document.getElementById('d-pad-down').addEventListener('click', function() {
+            handleInput(0, 1);
+        });
+        
+        document.getElementById('d-pad-left').addEventListener('click', function() {
+            handleInput(-1, 0);
+        });
+        
+        document.getElementById('d-pad-right').addEventListener('click', function() {
+            handleInput(1, 0);
+        });
+        
+        document.addEventListener('fullscreenchange', checkFullscreenStatus);
+        document.addEventListener('webkitfullscreenchange', checkFullscreenStatus);
+        document.addEventListener('mozfullscreenchange', checkFullscreenStatus);
+        document.addEventListener('msfullscreenchange', checkFullscreenStatus);
+        
+        document.getElementById('return-fullscreen-button').addEventListener('click', function() {
+            playSound('click');
+            enterFullscreen();
+        });
+        
+        function init() {
+            initAudio();
+            loadPlayersList();
+            loadProfiles();
+            createVirtualKeyboard();
+            
+            updateStartButton();
+            
+            setTimeout(function() {
+                showScreen('adminPlayers');
+                renderPlayersList();
+            }, 1500);
+        }
+        
+        init();
+        
+    })();
+    </script>
+</body>
+</html>
